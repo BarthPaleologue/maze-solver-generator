@@ -1,7 +1,9 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Maze implements MazeInterface {
@@ -22,47 +24,53 @@ public class Maze implements MazeInterface {
 		vertexMatrix = new ArrayList<ArrayList<VertexInterface>>();
 	}
 	
-	public final void initFromTextFile(String fileName) throws MazeReadingException, IOException {
+	public final void initFromTextFile(String fileName) throws MazeReadingException {
 
 		FileReader fr = null;
 		BufferedReader br = null;
 		
 		try {
-		 // https://www.javatpoint.com/java-bufferedreader-class
-		 fr = new FileReader(fileName);    
-         br = new BufferedReader(fr);    
-         
-         int j = 0;
-         while (true) {
-            String line = br.readLine();
-        	System.out.println(line);
-            if(line == null) break;
-            vertexMatrix.add(new ArrayList<VertexInterface>());
-            graph.add(new ArrayList<ArrayList<VertexInterface>>());
-            for(int i = 0; i < line.length(); i++) {
-            	char label = line.charAt(i);
-            	
-            	VertexInterface box;
-            	
-            	if(label == 'A') box = new ABox(this, i, j);
-            	else if(label == 'W') box = new WBox(this, i, j);
-            	else if(label == 'D') box = new DBox(this, i, j);
-            	else if(label == 'E') box = new EBox(this, i, j);
-            	else {
-            		throw new Exception("Invalid box label");
-            	}
-            	
-            	vertexMatrix.get(vertexMatrix.size() - 1).add(box);
-            	
-            	graph.get(j).add(new ArrayList<VertexInterface>());
-            }
-            j++;
-         }
+			 // https://www.javatpoint.com/java-bufferedreader-class
+			 fr = new FileReader(fileName);    
+	         br = new BufferedReader(fr);    
+	         
+	         int j = 0;
+	         while (true) {
+	            String line = br.readLine();
+	        	System.out.println(line);
+	            if(line == null) break;
+	            vertexMatrix.add(new ArrayList<VertexInterface>());
+	            graph.add(new ArrayList<ArrayList<VertexInterface>>());
+	            for(int i = 0; i < line.length(); i++) {
+	            	char label = line.charAt(i);
+	            	
+	            	VertexInterface box;
+	            	
+	            	if(label == 'A') box = new ABox(this, i, j);
+	            	else if(label == 'W') box = new WBox(this, i, j);
+	            	else if(label == 'D') box = new DBox(this, i, j);
+	            	else if(label == 'E') box = new EBox(this, i, j);
+	            	else {
+	            		throw new BoxLabelException(label, i, j);
+	            	}
+	            	
+	            	vertexMatrix.get(vertexMatrix.size() - 1).add(box);
+	            	
+	            	graph.get(j).add(new ArrayList<VertexInterface>());
+	            }
+	            j++;
+	         }
+		} catch(BoxLabelException e) {
+			e.printStackTrace();
 		} catch(Exception e) {
-			throw new MazeReadingException(fileName);
+			new MazeReadingException(fileName, e).printStackTrace();
 		} finally {
-			br.close();    
-			fr.close(); 
+			try {
+				br.close();
+				fr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}    
 		}
          
           
@@ -98,7 +106,27 @@ public class Maze implements MazeInterface {
          }
          
          System.out.println(graph);
+	}
+	
+	public final void saveToTextFile(String fileName) {
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(new File(fileName));
+			for(int x = 0; x < vertexMatrix.size(); ++x) {
+				for(int y = 0; y < vertexMatrix.get(0).size(); ++y) {
+					writer.append(vertexMatrix.get(x).get(y).getLabel());
+				}
+				writer.append('\n');
+			}                                               
+			writer.flush();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			writer.close(); 
+		}
+		
 
+		
 	}
 	
 	public ArrayList<VertexInterface> getNeighbors(int x, int y) {

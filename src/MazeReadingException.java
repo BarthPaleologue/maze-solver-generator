@@ -1,9 +1,11 @@
 
 public class MazeReadingException extends Exception {
-	public MazeReadingException() {
-		super("Erreur lors de la lecture du fichier labyrinthe");
-	}
-	public MazeReadingException(String fileName) {
-		super("Erreur lors de la lecture du fichier : " + fileName);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6669770188914919564L;
+
+	public MazeReadingException(String fileName, Throwable cause) {
+		super("Erreur lors de la lecture du fichier : " + fileName, cause);
 	}
 }
