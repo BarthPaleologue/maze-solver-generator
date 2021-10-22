@@ -12,12 +12,7 @@ public class Maze implements MazeInterface {
 	
 	private final ArrayList<ArrayList<VertexInterface>> vertexMatrix;
 	
-	private final int _w;
-	private final int _h;
-	
-	public Maze(int w, int h) {
-		_w = w;
-		_h = h;
+	public Maze() {
 		
 		graph = new ArrayList<ArrayList<ArrayList<VertexInterface>>>();
 		
@@ -36,26 +31,40 @@ public class Maze implements MazeInterface {
 	         
 	         int j = 0;
 	         while (true) {
-	            String line = br.readLine();
-	        	System.out.println(line);
-	            if(line == null) break;
+	            
+	        	String line = br.readLine();
+	        	
+	        	if(line == null) break;
+	            
+	        	// construction des matrices vides
 	            vertexMatrix.add(new ArrayList<VertexInterface>());
 	            graph.add(new ArrayList<ArrayList<VertexInterface>>());
+	            
 	            for(int i = 0; i < line.length(); i++) {
-	            	char label = line.charAt(i);
 	            	
+	            	char label = line.charAt(i);
 	            	VertexInterface box;
 	            	
-	            	if(label == 'A') box = new ABox(this, i, j);
-	            	else if(label == 'W') box = new WBox(this, i, j);
-	            	else if(label == 'D') box = new DBox(this, i, j);
-	            	else if(label == 'E') box = new EBox(this, i, j);
-	            	else {
-	            		throw new BoxLabelException(label, i, j);
+	            	switch(label) {
+		            	case 'A':
+		            		box = new ABox(this, i, j);
+		            		break;
+		            	case 'W':
+		            		box = new WBox(this, i, j);
+		            		break;
+		            	case 'D':
+		            		box = new DBox(this, i, j);
+		            		break;
+		            	case 'E':
+		            		box = new EBox(this, i, j);
+		            		break;
+		            	default:
+		            		throw new BoxLabelException(label, i, j);		
 	            	}
 	            	
 	            	vertexMatrix.get(vertexMatrix.size() - 1).add(box);
 	            	
+	            	// ajout d'une liste de voisins vide
 	            	graph.get(j).add(new ArrayList<VertexInterface>());
 	            }
 	            j++;
@@ -73,11 +82,9 @@ public class Maze implements MazeInterface {
 			}    
 		}
          
-          
-         
-         // Initialisation du graph
-         for(int x = 0; x < vertexMatrix.size(); x++) {
-        	 for(int y = 0; y < vertexMatrix.size(); y++) {
+        // Initialisation du graph
+		for(int x = 0; x < vertexMatrix.size(); ++x) {
+        	 for(int y = 0; y < vertexMatrix.size(); ++y) {
         		 VertexInterface vertex = vertexMatrix.get(x).get(y);
         		 char label = vertex.getLabel();
         		 

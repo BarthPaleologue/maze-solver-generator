@@ -1,10 +1,8 @@
-import java.io.IOException;
-
 public class MainTest {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws MazeReadingException {
 		// TODO Auto-generated method stub
-		Maze maze = new Maze(10, 10);
+		Maze maze = new Maze();
 		maze.initFromTextFile("data/labyrinthe.txt");
 		maze.saveToTextFile("data/labyrinthe2.txt");
 	}
