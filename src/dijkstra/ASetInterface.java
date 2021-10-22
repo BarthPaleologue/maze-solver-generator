@@ -1,3 +1,4 @@
+package dijkstra;
 
 public interface ASetInterface {
 	public void add(int vertex);

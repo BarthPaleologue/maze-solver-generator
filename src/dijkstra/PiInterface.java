@@ -1,3 +1,4 @@
+package dijkstra;
 
 public interface PiInterface {
 	public int get(int vertex);

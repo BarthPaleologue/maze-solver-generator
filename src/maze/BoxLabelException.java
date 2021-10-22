@@ -1,3 +1,4 @@
+package maze;
 
 public class BoxLabelException extends Exception {
 	/**

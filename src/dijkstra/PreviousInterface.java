@@ -1,3 +1,4 @@
+package dijkstra;
 	
 public interface PreviousInterface {
 	public int get(int vertex);

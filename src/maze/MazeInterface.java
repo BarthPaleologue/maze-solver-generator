@@ -1,4 +1,7 @@
+package maze;
 import java.util.ArrayList;
+
+import dijkstra.VertexInterface;
 
 public interface MazeInterface {
 	
