@@ -1,4 +1,4 @@
 
 public interface VertexInterface {
-	public String getLabel();
+	public char getLabel();
 }

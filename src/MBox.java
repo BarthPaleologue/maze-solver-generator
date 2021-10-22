@@ -6,7 +6,7 @@ public abstract class MBox implements VertexInterface {
 	
 	private Maze _maze;
 	
-	private String _label;
+	private char _label;
 	
 	public MBox(Maze maze, int x, int y) {
 		_x = x;
@@ -23,11 +23,20 @@ public abstract class MBox implements VertexInterface {
 		return _y;
 	}
 	
-	public String getLabel() {
+	public char getLabel() {
 		return _label;
+	}
+	
+	public void setLabel(char newLabel) {
+		_label = newLabel;
 	}
 	
 	public ArrayList<VertexInterface> getNeighbors() {
 		return _maze.getNeighbors(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "["+_x+";"+_y+";"+_label+"]";
 	}
 }
