@@ -43,7 +43,7 @@ public class Dijkstra {
 			
 			markedSet.remove(pivot);
 			
-			ArrayList<VertexInterface> voisins = maze.getNeighbors(pivot.getY(), pivot.getX());
+			ArrayList<VertexInterface> voisins = maze.getNeighbors(pivot);
 			
 			for(VertexInterface voisin: voisins) {
 				if(!markedSet.contains(voisin) && !visitedSet.contains(voisin)) {

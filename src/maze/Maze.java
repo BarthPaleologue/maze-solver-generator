@@ -10,11 +10,11 @@ import java.util.Arrays;
 
 import dijkstra.VertexInterface;
 
-public class Maze implements MazeInterface {
+public class Maze implements GraphInterface {
 	
 	private ArrayList<VertexInterface>[][] graph;
 	
-	private final ArrayList<ArrayList<VertexInterface>> vertexMatrix;
+	private final ArrayList<VertexInterface[]> vertexMatrix;
 	
 	private VertexInterface startPoint;
 	private VertexInterface endPoint;
@@ -26,10 +26,10 @@ public class Maze implements MazeInterface {
 		
 		graph = null;
 		
-		vertexMatrix = new ArrayList<ArrayList<VertexInterface>>();
+		vertexMatrix = new ArrayList<VertexInterface[]>();
 	}
 	
-	public final void initFromTextFile(String fileName) throws MazeReadingException {
+	public void initFromTextFile(String fileName) throws MazeReadingException {
 
 		FileReader fr = null;
 		BufferedReader br = null;
@@ -42,9 +42,7 @@ public class Maze implements MazeInterface {
 	         int j = 0;
 	         for(String line = br.readLine(); line != null; line = br.readLine()) {
 	        	 
-	        	// construction des matrices vides
-	            vertexMatrix.add(new ArrayList<VertexInterface>());
-	            //graph.add(new ArrayList<ArrayList<VertexInterface>>());
+	            vertexMatrix.add(new VertexInterface[line.length()]);
 	            
 	            for(int i = 0; i < line.length(); i++) {
 	            	
@@ -70,7 +68,8 @@ public class Maze implements MazeInterface {
 		            		throw new BoxLabelException(label, i, j);		
 	            	}
 	            	
-	            	vertexMatrix.get(vertexMatrix.size() - 1).add(box);
+	            	// tous les problèmes d'indices viennent d'ici lol
+	            	vertexMatrix.get(j)[i] = box;
 	            }
 	            j++;
 	         }
@@ -88,38 +87,38 @@ public class Maze implements MazeInterface {
 		}
 		
 		width = vertexMatrix.size();
-		height = vertexMatrix.get(0).size();
+		height = vertexMatrix.get(0).length;
 		
 		graph = new ArrayList[width][height];
          
         // Initialisation du graph
-		for(int x = 0; x < vertexMatrix.size(); ++x) {
-        	 for(int y = 0; y < vertexMatrix.get(x).size(); ++y) {
+		for(int x = 0; x < width; ++x) {
+        	 for(int y = 0; y < height; ++y) {
         		 graph[x][y] = new ArrayList<VertexInterface>();
         		 
-        		 VertexInterface vertex = vertexMatrix.get(x).get(y);
+        		 VertexInterface vertex = vertexMatrix.get(x)[y];
         		 char label = vertex.getLabel();
         		 
         		 if(label == 'W') continue; // un mur n'a pas de voisins
         		 
-        		 if(x > 0 && vertexMatrix.get(x-1).get(y).getLabel() != 'W') {
+        		 if(x > 0 && vertexMatrix.get(x-1)[y].getLabel() != 'W') {
         			 // voisin de gauche accessible
-        			 graph[x][y].add(vertexMatrix.get(x-1).get(y));
+        			 graph[x][y].add(vertexMatrix.get(x-1)[y]);
         		 }
         		 
-        		 if(x < vertexMatrix.size() - 1 && vertexMatrix.get(x+1).get(y).getLabel() != 'W') {
+        		 if(x < width - 1 && vertexMatrix.get(x+1)[y].getLabel() != 'W') {
         			// voisin de droite accessible
-        			graph[x][y].add(vertexMatrix.get(x+1).get(y));
+        			graph[x][y].add(vertexMatrix.get(x+1)[y]);
         		 }
         		 
-        		 if(y > 0 && vertexMatrix.get(x).get(y-1).getLabel() != 'W') {
+        		 if(y > 0 && vertexMatrix.get(x)[y-1].getLabel() != 'W') {
         			 // voisin du bas accessible
-        			 graph[x][y].add(vertexMatrix.get(x).get(y-1));
+        			 graph[x][y].add(vertexMatrix.get(x)[y-1]);
         		 }
         		 
-        		 if(y < vertexMatrix.get(x).size() - 1 && vertexMatrix.get(x).get(y+1).getLabel() != 'W') {
+        		 if(y < height - 1 && vertexMatrix.get(x)[y+1].getLabel() != 'W') {
         			// voisin du haut accessible
-        			 graph[x][y].add(vertexMatrix.get(x).get(y+1));
+        			 graph[x][y].add(vertexMatrix.get(x)[y+1]);
         		 }
         	 }
          }
@@ -132,9 +131,9 @@ public class Maze implements MazeInterface {
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter(new File(fileName));
-			for(int x = 0; x < vertexMatrix.size(); ++x) {
-				for(int y = 0; y < vertexMatrix.get(0).size(); ++y) {
-					writer.append(vertexMatrix.get(x).get(y).getLabel());
+			for(int x = 0; x < width; ++x) {
+				for(int y = 0; y < height; ++y) {
+					writer.append(vertexMatrix.get(x)[y].getLabel());
 				}
 				writer.append('\n');
 			}                                               
@@ -144,43 +143,15 @@ public class Maze implements MazeInterface {
 		} finally {
 			writer.close(); 
 		}
-		
-
-		
 	}
 	
 	public VertexInterface getCell(int x, int y) {
-		return vertexMatrix.get(x).get(y);
-	}
-	
-	public ArrayList<ArrayList<VertexInterface>> getGrid() {
-		return vertexMatrix;
-	}
-	
-	public ArrayList<VertexInterface> getNeighbors(int x, int y) {
-		return graph[x][y];
+		return vertexMatrix.get(x)[y];
 	}
 	
 	public ArrayList<VertexInterface> getNeighbors(VertexInterface vertex) {
-		return graph[((MBox)vertex).getX()][((MBox)vertex).getY()];
-	}
-	
-	public ArrayList<VertexInterface> getAllVertices() {
-		ArrayList<VertexInterface> vertexList = new ArrayList<>();
-		for(int x = 0; x < vertexMatrix.size(); ++x) {
-			for(int y = 0; y < vertexMatrix.get(x).size(); ++y) {
-				vertexList.add(vertexMatrix.get(x).get(y));
-			}
-		}
-		return vertexList;
-	}
-	
-	public ArrayList<VertexInterface> getSuccessors(VertexInterface vertex) {
-		return graph[((MBox)vertex).getX()][((MBox)vertex).getY()];
-	}
-	
-	public int getWeight(VertexInterface src, VertexInterface dst) {
-		return 0;
+		// todo remettre les index dans le bon sens
+		return graph[vertex.getY()][vertex.getX()];
 	}
 	
 	public VertexInterface getStartPoint() {
