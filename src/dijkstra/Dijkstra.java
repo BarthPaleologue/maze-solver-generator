@@ -6,7 +6,7 @@ import java.util.Arrays;
 import maze.Maze;
 
 public class Dijkstra {
-	public int[][][] Dijkstra(Maze maze) {
+	public static int[][][] compute(Maze maze) {
 		ASet markedSet = new ASet();
 		ASet visitedSet = new ASet();
 		
@@ -50,10 +50,12 @@ public class Dijkstra {
 					markedSet.add(voisin);
 				}
 				if(PI[voisin.getY()][voisin.getX()] == -1) {
+					// si sommet à l'infini
 					PI[voisin.getY()][voisin.getX()] = PI[pivot.getY()][pivot.getX()] + 1;
 					Previous[voisin.getY()][voisin.getX()][0] = pivot.getX();
 					Previous[voisin.getY()][voisin.getX()][1] = pivot.getY();
 				} else if(PI[pivot.getY()][pivot.getX()] + 1 < PI[voisin.getY()][voisin.getX()]) {
+					// si sommet déjà marqué
 					PI[voisin.getY()][voisin.getX()] = PI[pivot.getY()][pivot.getX()] + 1;
 					Previous[voisin.getY()][voisin.getX()][0] = pivot.getX();
 					Previous[voisin.getY()][voisin.getX()][1] = pivot.getY();

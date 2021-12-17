@@ -1,6 +1,4 @@
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
@@ -8,6 +6,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import dijkstra.Dijkstra;
 import dijkstra.VertexInterface;
@@ -18,40 +17,28 @@ public class Main {
 	public static void main(String[] args) {
 		
 		JFrame w = new JFrame("PROJEEEET");
+		w.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
 		JPanel mainPanel = new JPanel();
-		
-		int width = 10;
-		int height = 10;
-		mainPanel.setLayout(new GridLayout(width, height));
-		
-		Box[][] UIGrid = new Box[width][height];
-		
-		for(int i = 0; i < width; i++) {
-			for(int j = 0; j < height; j++) {
-				
-				Box testBox = new Box(BoxLayout.X_AXIS);
-				testBox.setBorder(BorderFactory.createLineBorder(Color.black));
-				testBox.setBounds(i*width, j*height, width, height);
-				testBox.setBackground(Color.white);
-				testBox.setOpaque(true);
-				mainPanel.add(testBox);
-				
-				UIGrid[i][j] = testBox;
-			}
-		}
-		
 		w.add(mainPanel);
-		
-		w.setSize(600, 600);
-		w.setVisible(true);
 		
 		
 		Maze maze = new Maze();
 		try {
+			// initialisation du labyrinthe à partir d'un fichier
 			maze.initFromTextFile("data/labyrinthe.txt");
+			
+			mainPanel.setLayout(new GridLayout(maze.getWidth(), maze.getHeight()));
+			
+			Box[][] UIGrid = new Box[maze.getWidth()][maze.getHeight()];
 			
 			for(int i = 0; i < maze.getWidth(); i++) {
 				for(int j = 0; j < maze.getHeight(); j++) {
+					Box box = new Box(BoxLayout.X_AXIS);
+					box.setBorder(BorderFactory.createLineBorder(Color.black));
+					box.setBounds(i, j, 1, 1);
+					box.setOpaque(true);
+
 					Color color;
 					switch(maze.getCell(i, j).getLabel()) {
 						case 'A':
@@ -69,24 +56,29 @@ public class Main {
 						default:
 							color = Color.pink;
 					}
-					UIGrid[i][j].setBackground(color);
+					
+					box.setBackground(color);
+					mainPanel.add(box);
+					
+					UIGrid[i][j] = box;
 					
 				}
 			}
-
-			Dijkstra dijkstra = new Dijkstra();
 			
-			int[][][] previous = dijkstra.Dijkstra(maze);
+			w.setSize(600, 600);
+			w.setVisible(true);
+			
+			int[][][] previous = Dijkstra.compute(maze);
 			
 			VertexInterface startPoint = maze.getStartPoint();
 
 			VertexInterface endPoint = maze.getEndPoint();
 
-			boolean arrived = false;
-			int[] coords = {maze.getEndPoint().getX(), maze.getEndPoint().getY()};
+			int[] coords = {endPoint.getX(), endPoint.getY()};
 			
 			ArrayList<int[]> path = new ArrayList<>();
 			
+			// détermination du plus court chemin trouvé
 			while(true) {
 				int[] newCoords = {previous[coords[1]][coords[0]][0],previous[coords[1]][coords[0]][1]};
 				if(startPoint.getX() == newCoords[0] && startPoint.getY() == newCoords[1]) {
@@ -104,10 +96,15 @@ public class Main {
 				coords[1] = newCoords[1];
 			}
 			
+			// on affiche le chemin à l'envers (on a trouvé le plus court de fin vers début)
 			for(int i = path.size() - 1; i >= 0; i--) {
 				int[] pathStone = path.get(i);
-				System.out.println("["+pathStone[0]+";"+pathStone[1]+"]");
+				//System.out.println("["+pathStone[0]+";"+pathStone[1]+"]");
+				
+				// on allume la case du chemin
 				UIGrid[pathStone[1]][pathStone[0]].setBackground(Color.GREEN);
+				
+				// petit délai pour l'effet de progression
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {

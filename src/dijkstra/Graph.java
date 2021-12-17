@@ -1,9 +1,8 @@
-package maze;
+package dijkstra;
 
 import java.util.ArrayList;
 
-import dijkstra.GraphInterface;
-import dijkstra.VertexInterface;
+import maze.MBox;
 
 public class Graph implements GraphInterface {
 	private ArrayList<ArrayList<ArrayList<VertexInterface>>> graph;
