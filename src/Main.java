@@ -80,7 +80,7 @@ public class Main {
 			
 			// détermination du plus court chemin trouvé
 			while(true) {
-				int[] newCoords = {previous[coords[1]][coords[0]][0],previous[coords[1]][coords[0]][1]};
+				int[] newCoords = {previous[coords[0]][coords[1]][0],previous[coords[0]][coords[1]][1]};
 				if(startPoint.getX() == newCoords[0] && startPoint.getY() == newCoords[1]) {
 					break;
 				}
@@ -102,7 +102,7 @@ public class Main {
 				//System.out.println("["+pathStone[0]+";"+pathStone[1]+"]");
 				
 				// on allume la case du chemin
-				UIGrid[pathStone[1]][pathStone[0]].setBackground(Color.GREEN);
+				UIGrid[pathStone[0]][pathStone[1]].setBackground(Color.GREEN);
 				
 				// petit délai pour l'effet de progression
 				try {

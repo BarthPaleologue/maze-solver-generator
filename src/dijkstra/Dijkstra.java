@@ -15,9 +15,9 @@ public class Dijkstra {
 		
 		for(int i = 0; i < maze.getWidth(); ++i) {
 			for(int j = 0; j < maze.getHeight(); ++j) {
-				PI[j][i] = -1;
-				Previous[j][i][0] = -1;
-				Previous[j][i][1] = -1;
+				PI[i][j] = -1;
+				Previous[i][j][0] = -1;
+				Previous[i][j][1] = -1;
 			}
 		}
 		
@@ -25,7 +25,7 @@ public class Dijkstra {
 		VertexInterface startPoint = maze.getStartPoint();
 		
 		markedSet.add(startPoint);
-		PI[startPoint.getY()][startPoint.getX()] = 0;
+		PI[startPoint.getX()][startPoint.getY()] = 0;
 		
 	
 		while(markedSet.length() > 0) {
@@ -35,7 +35,7 @@ public class Dijkstra {
 				VertexInterface pivotCandidat = markedSet.get(i);
 				if(pivot == null) pivot = pivotCandidat;
 				else {
-					if(PI[pivotCandidat.getY()][pivotCandidat.getX()] < PI[pivot.getY()][pivot.getX()]) {
+					if(PI[pivotCandidat.getX()][pivotCandidat.getY()] < PI[pivot.getX()][pivot.getY()]) {
 						pivot = pivotCandidat;
 					}
 				}
@@ -49,16 +49,16 @@ public class Dijkstra {
 				if(!markedSet.contains(voisin) && !visitedSet.contains(voisin)) {
 					markedSet.add(voisin);
 				}
-				if(PI[voisin.getY()][voisin.getX()] == -1) {
+				if(PI[voisin.getX()][voisin.getY()] == -1) {
 					// si sommet à l'infini
-					PI[voisin.getY()][voisin.getX()] = PI[pivot.getY()][pivot.getX()] + 1;
-					Previous[voisin.getY()][voisin.getX()][0] = pivot.getX();
-					Previous[voisin.getY()][voisin.getX()][1] = pivot.getY();
-				} else if(PI[pivot.getY()][pivot.getX()] + 1 < PI[voisin.getY()][voisin.getX()]) {
+					PI[voisin.getX()][voisin.getY()] = PI[pivot.getX()][pivot.getY()] + 1;
+					Previous[voisin.getX()][voisin.getY()][0] = pivot.getX();
+					Previous[voisin.getX()][voisin.getY()][1] = pivot.getY();
+				} else if(PI[pivot.getX()][pivot.getY()] + 1 < PI[voisin.getX()][voisin.getY()]) {
 					// si sommet déjà marqué
-					PI[voisin.getY()][voisin.getX()] = PI[pivot.getY()][pivot.getX()] + 1;
-					Previous[voisin.getY()][voisin.getX()][0] = pivot.getX();
-					Previous[voisin.getY()][voisin.getX()][1] = pivot.getY();
+					PI[voisin.getX()][voisin.getY()] = PI[pivot.getX()][pivot.getY()] + 1;
+					Previous[voisin.getX()][voisin.getY()][0] = pivot.getX();
+					Previous[voisin.getX()][voisin.getY()][1] = pivot.getY();
 				}
 			}
 			

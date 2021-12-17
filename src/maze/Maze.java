@@ -51,18 +51,18 @@ public class Maze implements GraphInterface {
 	            	
 	            	switch(label) {
 		            	case 'A':
-		            		box = new ABox(this, j, i);
+		            		box = new ABox(this, i, j);
 		            		endPoint = box;
 		            		break;
 		            	case 'W':
-		            		box = new WBox(this, j, i);
+		            		box = new WBox(this, i, j);
 		            		break;
 		            	case 'D':
-		            		box = new DBox(this, j, i);
+		            		box = new DBox(this, i, j);
 		            		startPoint = box;
 		            		break;
 		            	case 'E':
-		            		box = new EBox(this, j, i);
+		            		box = new EBox(this, i, j);
 		            		break;
 		            	default:
 		            		throw new BoxLabelException(label, i, j);		
@@ -151,7 +151,7 @@ public class Maze implements GraphInterface {
 	
 	public ArrayList<VertexInterface> getNeighbors(VertexInterface vertex) {
 		// todo remettre les index dans le bon sens
-		return graph[vertex.getY()][vertex.getX()];
+		return graph[vertex.getX()][vertex.getY()];
 	}
 	
 	public VertexInterface getStartPoint() {
