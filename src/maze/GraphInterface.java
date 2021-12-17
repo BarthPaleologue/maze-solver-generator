@@ -1,4 +1,4 @@
-package dijkstra;
+package maze;
 
 public interface GraphInterface {
 
