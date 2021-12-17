@@ -39,39 +39,39 @@ public class Maze implements GraphInterface {
 			 fr = new FileReader(fileName);    
 	         br = new BufferedReader(fr);    
 	         
-	         int j = 0;
+	         int i = 0;
 	         for(String line = br.readLine(); line != null; line = br.readLine()) {
 	        	 
 	            vertexMatrix.add(new VertexInterface[line.length()]);
 	            
-	            for(int i = 0; i < line.length(); i++) {
+	            for(int j = 0; j < line.length(); j++) {
 	            	
-	            	char label = line.charAt(i);
+	            	char label = line.charAt(j);
 	            	VertexInterface box;
 	            	
 	            	switch(label) {
 		            	case 'A':
-		            		box = new ABox(this, i, j);
+		            		box = new ABox(this, j, i);
 		            		endPoint = box;
 		            		break;
 		            	case 'W':
-		            		box = new WBox(this, i, j);
+		            		box = new WBox(this, j, i);
 		            		break;
 		            	case 'D':
-		            		box = new DBox(this, i, j);
+		            		box = new DBox(this, j, i);
 		            		startPoint = box;
 		            		break;
 		            	case 'E':
-		            		box = new EBox(this, i, j);
+		            		box = new EBox(this, j, i);
 		            		break;
 		            	default:
 		            		throw new BoxLabelException(label, i, j);		
 	            	}
 	            	
 	            	// tous les problèmes d'indices viennent d'ici lol
-	            	vertexMatrix.get(j)[i] = box;
+	            	vertexMatrix.get(i)[j] = box;
 	            }
-	            j++;
+	            i++;
 	         }
 		} catch(BoxLabelException e) {
 			e.printStackTrace();

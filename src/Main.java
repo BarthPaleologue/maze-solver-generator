@@ -96,7 +96,7 @@ public class Main {
 				coords[1] = newCoords[1];
 			}
 			
-			// on affiche le chemin à l'envers (on a trouvé le plus court de fin vers début)
+			// on affiche le chemin à l'envers (on a trouvé le plus court de fin vers déb
 			for(int i = path.size() - 1; i >= 0; i--) {
 				int[] pathStone = path.get(i);
 				//System.out.println("["+pathStone[0]+";"+pathStone[1]+"]");
