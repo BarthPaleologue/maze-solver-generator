@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import dijkstra.Dijkstra;
+import dijkstra.Previous;
 import dijkstra.VertexInterface;
 import maze.Maze;
 import maze.MazeReadingException;
@@ -68,7 +69,7 @@ public class Main {
 			w.setSize(600, 600);
 			w.setVisible(true);
 			
-			int[][][] previous = Dijkstra.compute(maze);
+			Previous previous = Dijkstra.compute(maze);
 			
 			VertexInterface startPoint = maze.getStartPoint();
 
@@ -80,12 +81,14 @@ public class Main {
 			
 			// détermination du plus court chemin trouvé
 			while(true) {
-				int[] newCoords = {previous[coords[0]][coords[1]][0],previous[coords[0]][coords[1]][1]};
+				int[] newCoords = previous.get(coords[0], coords[1]);
 				if(startPoint.getX() == newCoords[0] && startPoint.getY() == newCoords[1]) {
+					// si on est revenu au début
 					break;
 				}
 				
 				if(newCoords[0] == -1 && newCoords[1] == -1) {
+					// si on a échoué à revenir au début
 					System.out.println("Could not find a path");
 					break;
 				}

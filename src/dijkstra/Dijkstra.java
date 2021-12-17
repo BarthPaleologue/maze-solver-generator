@@ -6,18 +6,17 @@ import java.util.Arrays;
 import maze.Maze;
 
 public class Dijkstra {
-	public static int[][][] compute(Maze maze) {
+	public static Previous compute(Maze maze) {
 		ASet markedSet = new ASet();
 		ASet visitedSet = new ASet();
 		
-		int[][][] Previous = new int[maze.getWidth()][maze.getHeight()][2];
+		Previous previous = new Previous(maze.getWidth(), maze.getHeight());
+		
 		int[][] PI = new int[maze.getWidth()][maze.getHeight()];
 		
 		for(int i = 0; i < maze.getWidth(); ++i) {
 			for(int j = 0; j < maze.getHeight(); ++j) {
 				PI[i][j] = -1;
-				Previous[i][j][0] = -1;
-				Previous[i][j][1] = -1;
 			}
 		}
 		
@@ -52,13 +51,11 @@ public class Dijkstra {
 				if(PI[voisin.getX()][voisin.getY()] == -1) {
 					// si sommet à l'infini
 					PI[voisin.getX()][voisin.getY()] = PI[pivot.getX()][pivot.getY()] + 1;
-					Previous[voisin.getX()][voisin.getY()][0] = pivot.getX();
-					Previous[voisin.getX()][voisin.getY()][1] = pivot.getY();
+					previous.set(voisin, pivot);
 				} else if(PI[pivot.getX()][pivot.getY()] + 1 < PI[voisin.getX()][voisin.getY()]) {
 					// si sommet déjà marqué
 					PI[voisin.getX()][voisin.getY()] = PI[pivot.getX()][pivot.getY()] + 1;
-					Previous[voisin.getX()][voisin.getY()][0] = pivot.getX();
-					Previous[voisin.getX()][voisin.getY()][1] = pivot.getY();
+					previous.set(voisin, pivot);
 				}
 			}
 			
@@ -66,8 +63,7 @@ public class Dijkstra {
 		}
 		
 		System.out.println();
-		String output = Arrays.deepToString(Previous).replace("]],", "]],\n");
-		System.out.println(output);
+		System.out.println(previous.toString());
 		
 		System.out.println();
 		String output2 = Arrays.deepToString(PI).replace("],", "],\n");
@@ -75,6 +71,6 @@ public class Dijkstra {
 		
 		
 		
-		return Previous;
+		return previous;
 	}
 }
