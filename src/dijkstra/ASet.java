@@ -1,15 +1,29 @@
 package dijkstra;
 
-public class ASet implements ASetInterface {
+import java.util.ArrayList;
 
-	public void add(int vertex) {
-		// TODO Auto-generated method stub
-		
+public class ASet implements ASetInterface {
+	
+	private ArrayList<VertexInterface> list = new ArrayList<>();
+
+	public void add(VertexInterface vertex) {
+		list.add(vertex);
 	}
 
-	public boolean isIn(int vertex) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean contains(VertexInterface vertex) {
+		return list.contains(vertex);
+	}
+	
+	public int length() {
+		return list.size();
+	}
+	
+	public VertexInterface get(int index) {
+		return list.get(index);
+	}
+	
+	public void remove(VertexInterface vertex) {
+		list.remove(vertex);
 	}
 
 }
