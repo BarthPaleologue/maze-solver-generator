@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import dijkstra.Dijkstra;
+import dijkstra.Previous;
 import dijkstra.VertexInterface;
 
 public class Maze implements GraphInterface {
@@ -168,5 +170,39 @@ public class Maze implements GraphInterface {
 	
 	public int getHeight() {
 		return height;
+	}
+	
+	public ArrayList<int[]> solve() {
+		Previous previous = Dijkstra.compute(this);
+		
+		VertexInterface startPoint = this.getStartPoint();
+
+		VertexInterface endPoint = this.getEndPoint();
+		
+		int[] coords = {endPoint.getX(), endPoint.getY()};
+		
+		ArrayList<int[]> path = new ArrayList<>();
+		
+		// détermination du plus court chemin trouvé
+		while(true) {
+			int[] newCoords = previous.get(coords[0], coords[1]);
+			if(startPoint.getX() == newCoords[0] && startPoint.getY() == newCoords[1]) {
+				// si on est revenu au début
+				break;
+			}
+			
+			if(newCoords[0] == -1 && newCoords[1] == -1) {
+				// si on a échoué à revenir au début
+				System.out.println("Could not find a path");
+				break;
+			}
+			
+			path.add(newCoords);
+			
+			coords[0] = newCoords[0];
+			coords[1] = newCoords[1];
+		}
+		
+		return path;
 	}
 } 
