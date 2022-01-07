@@ -75,6 +75,7 @@ public class Maze implements GraphInterface {
 	            }
 	            i++;
 	         }
+	 		initGraph();
 		} catch(BoxLabelException e) {
 			e.printStackTrace();
 		} catch(Exception e) {
@@ -87,7 +88,9 @@ public class Maze implements GraphInterface {
 				e.printStackTrace();
 			}    
 		}
-		
+	}
+	
+	private void initGraph() {
 		width = vertexMatrix.size();
 		height = vertexMatrix.get(0).length;
 		
@@ -154,6 +157,11 @@ public class Maze implements GraphInterface {
 	public ArrayList<VertexInterface> getNeighbors(VertexInterface vertex) {
 		// todo remettre les index dans le bon sens
 		return graph[vertex.getX()][vertex.getY()];
+	}
+	
+	public void setCell(int x, int y, VertexInterface box) {
+		vertexMatrix.get(x)[y] = box;
+		initGraph();
 	}
 	
 	public VertexInterface getStartPoint() {

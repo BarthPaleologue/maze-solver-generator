@@ -1,13 +1,16 @@
 package dijkstra;
 
 import java.util.Arrays;
+import java.util.Hashtable;
 
 public class Previous implements PreviousInterface {
 	
 	private final int[][][] tab;
+	private final Hashtable<Integer[], VertexInterface> htab;
 	
 	Previous(int width, int height) {
 		tab = new int[width][height][2];
+		htab = new Hashtable<Integer[], VertexInterface>();
 		for(int i = 0; i < width; i++) {
 			for(int j = 0; j < height; j++) {
 				tab[i][j][0] = -1;

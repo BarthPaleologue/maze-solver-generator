@@ -15,22 +15,31 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.w3c.dom.events.MouseEvent;
 
 import maze.Maze;
+import maze.MazeReadingException;
+import sound.MakeSound;
 
 public class Window extends JFrame {
 	JPanel mazePanel;
 	CBox[][] UIGrid;
 	Maze maze;
+	MakeSound player;
 	
 	public Window(String title) {
 		super(title);
+		
+		player = new MakeSound();
+		player.OH();
+		
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
 		JPanel mainPanel = new JPanel();
@@ -44,24 +53,63 @@ public class Window extends JFrame {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		mainPanel.add(buttonPanel);
 		
-		JButton b1 = new JButton("Compute");//creating instance of JButton 
+		JButton b1 = new JButton("Compute"); 
 		b1.addActionListener(new ActionListener() {
 		       public void actionPerformed(ActionEvent e) {
 		             // this makes sure the button you are pressing is the button variable
 		             if(e.getSource() == b1) {
+		            	 reset();
 		            	 display(maze.solve());
 		             }
 		       }
 		 });
 		buttonPanel.add(b1);
 		
-		JButton b2 = new JButton("wesh");//creating instance of JButton  		
+		JButton b2 = new JButton("Reset");
+		b2.addActionListener(new ActionListener() {
+		       public void actionPerformed(ActionEvent e) {
+		             // this makes sure the button you are pressing is the button variable
+		             if(e.getSource() == b2) {
+		            	 reset();
+		             }
+		       }
+		});
 		buttonPanel.add(b2);
 		
-		JButton b3 = new JButton("alors");//creating instance of JButton  		
+		JButton b3 = new JButton("Save");//creating instance of JButton  
+		b3.addActionListener(new ActionListener() {
+		       public void actionPerformed(ActionEvent e) {
+		             // this makes sure the button you are pressing is the button variable
+		             if(e.getSource() == b3) {
+		            	 // TODO : ne pas tous les écraser
+		            	 maze.saveToTextFile("data/lastGenerated.txt");
+		             }
+		       }
+		});
 		buttonPanel.add(b3);
 		
-		JButton b4 = new JButton("comment");//creating instance of JButton  		
+		JButton b4 = new JButton("Load");//creating instance of JButton  	
+		b4.addActionListener(new ActionListener() {
+		       public void actionPerformed(ActionEvent e) {
+		             // this makes sure the button you are pressing is the button variable
+		             if(e.getSource() == b4) {
+		            	JFileChooser chooser = new JFileChooser();
+	            	    //FileNameExtensionFilter filter = new FileNameExtensionFilter("text");
+	            	    //chooser.setFileFilter(filter);
+	            	    int returnVal = chooser.showOpenDialog(mainPanel);
+	            	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	            	       System.out.println("You chose to open this file: " +
+	            	            chooser.getSelectedFile().getAbsolutePath());
+	            	       try {
+	            	    	   maze.initFromTextFile(chooser.getSelectedFile().getAbsolutePath());
+							} catch (MazeReadingException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+	            	    }
+		             }
+		       }
+		});
 		buttonPanel.add(b4);
 		
 		JButton b5 = new JButton("va");//creating instance of JButton  		
@@ -85,23 +133,7 @@ public class Window extends JFrame {
 				box.setBounds(i, j, 1, 1);
 				box.setOpaque(true);
 
-				Color color;
-				switch(maze.getCell(i, j).getLabel()) {
-					case 'A':
-						color = Color.red;
-						break;
-					case 'D':
-						color = Color.blue;
-						break;
-					case 'W':
-						color = Color.DARK_GRAY;
-						break;
-					case 'E':
-						color = Color.white;
-						break;
-					default:
-						color = Color.pink;
-				}
+				Color color = CBox.getColorFromLabel(maze.getCell(i, j).getLabel());
 				
 				box.setBackground(color);
 				mazePanel.add(box);
@@ -127,13 +159,15 @@ public class Window extends JFrame {
 			
 			// on allume la case du chemin
 			this.setCellColor(pathStone[0], pathStone[1], Color.GREEN);
-			
-			// petit délai pour l'effet de progression
-			/*try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}*/
+		}
+	}
+	
+	public void reset() {
+		for(int i = 0; i < maze.getWidth(); i++) {
+			for(int j = 0; j < maze.getHeight(); j++) {
+				Color originalColor = CBox.getColorFromLabel(maze.getCell(i, j).getLabel());
+				UIGrid[i][j].setBackground(originalColor);
+			}
 		}
 	}
 }
