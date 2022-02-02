@@ -16,7 +16,7 @@ public class Maze implements GraphInterface {
 	
 	private ArrayList<VertexInterface>[][] graph;
 	
-	private final ArrayList<VertexInterface[]> vertexMatrix;
+	private ArrayList<VertexInterface[]> vertexMatrix;
 	
 	private VertexInterface startPoint;
 	private VertexInterface endPoint;
@@ -28,7 +28,7 @@ public class Maze implements GraphInterface {
 		
 		graph = null;
 		
-		vertexMatrix = new ArrayList<VertexInterface[]>();
+		vertexMatrix = new ArrayList<>();
 	}
 	
 	public void initFromTextFile(String fileName) throws MazeReadingException {
@@ -39,7 +39,10 @@ public class Maze implements GraphInterface {
 		try {
 			 // https://www.javatpoint.com/java-bufferedreader-class
 			 fr = new FileReader(fileName);    
-	         br = new BufferedReader(fr);    
+	         br = new BufferedReader(fr);
+
+
+			vertexMatrix = new ArrayList<>();
 	         
 	         int i = 0;
 	         for(String line = br.readLine(); line != null; line = br.readLine()) {
@@ -69,8 +72,7 @@ public class Maze implements GraphInterface {
 		            	default:
 		            		throw new BoxLabelException(label, i, j);		
 	            	}
-	            	
-	            	// tous les problèmes d'indices viennent d'ici lol
+
 	            	vertexMatrix.get(i)[j] = box;
 	            }
 	            i++;
@@ -99,7 +101,7 @@ public class Maze implements GraphInterface {
         // Initialisation du graph
 		for(int x = 0; x < width; ++x) {
         	 for(int y = 0; y < height; ++y) {
-        		 graph[x][y] = new ArrayList<VertexInterface>();
+        		 graph[x][y] = new ArrayList<>();
         		 
         		 VertexInterface vertex = vertexMatrix.get(x)[y];
         		 char label = vertex.getLabel();
@@ -135,7 +137,7 @@ public class Maze implements GraphInterface {
 	public final void saveToTextFile(String fileName) {
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(new File(fileName));
+			writer = new PrintWriter(fileName);
 			for(int x = 0; x < width; ++x) {
 				for(int y = 0; y < height; ++y) {
 					writer.append(vertexMatrix.get(x)[y].getLabel());
@@ -155,7 +157,6 @@ public class Maze implements GraphInterface {
 	}
 	
 	public ArrayList<VertexInterface> getNeighbors(VertexInterface vertex) {
-		// todo remettre les index dans le bon sens
 		return graph[vertex.getX()][vertex.getY()];
 	}
 	

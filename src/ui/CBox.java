@@ -22,7 +22,6 @@ public class CBox extends Box implements MouseListener {
 		this.x = x;
 		this.y = y;
 		addMouseListener(this);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static Color getColorFromLabel(char label) {
@@ -48,13 +47,11 @@ public class CBox extends Box implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 		setBackground(Color.RED);
 		switch(e.getButton()) {
 		case 1:
@@ -76,20 +73,17 @@ public class CBox extends Box implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 }

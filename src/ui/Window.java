@@ -2,27 +2,16 @@ package ui;
 
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.ArrayList;
-import java.awt.CardLayout;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SpringLayout;
 import javax.swing.WindowConstants;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.w3c.dom.events.MouseEvent;
 
 import maze.Maze;
 import maze.MazeReadingException;
@@ -54,74 +43,62 @@ public class Window extends JFrame {
 		mainPanel.add(buttonPanel);
 		
 		JButton b1 = new JButton("Compute"); 
-		b1.addActionListener(new ActionListener() {
-		       public void actionPerformed(ActionEvent e) {
-		             // this makes sure the button you are pressing is the button variable
-		             if(e.getSource() == b1) {
-		            	 reset();
-		            	 display(maze.solve());
-		             }
-		       }
-		 });
+		b1.addActionListener(e -> {
+			  reset();
+			  display(maze.solve());
+		});
 		buttonPanel.add(b1);
 		
 		JButton b2 = new JButton("Reset");
-		b2.addActionListener(new ActionListener() {
-		       public void actionPerformed(ActionEvent e) {
-		             // this makes sure the button you are pressing is the button variable
-		             if(e.getSource() == b2) {
-		            	 reset();
-		             }
-		       }
-		});
+		b2.addActionListener(e -> reset());
 		buttonPanel.add(b2);
 		
 		JButton b3 = new JButton("Save");//creating instance of JButton  
-		b3.addActionListener(new ActionListener() {
-		       public void actionPerformed(ActionEvent e) {
-		             // this makes sure the button you are pressing is the button variable
-		             if(e.getSource() == b3) {
-		            	 // TODO : ne pas tous les écraser
-		            	 maze.saveToTextFile("data/lastGenerated.txt");
-		             }
-		       }
+		b3.addActionListener(e -> {
+			JFileChooser chooser = new JFileChooser("./data");
+			int returnVal = chooser.showOpenDialog(mainPanel);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				 String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
+				 String dirAbsPath = new File(".").getAbsolutePath();
+				 int len = dirAbsPath.length();
+				 String fileRelativePath = fileAbsPath.substring(len - 1);
+				 System.out.println("You chose to save to this file: " + fileAbsPath + " " + fileRelativePath);
+
+				 maze.saveToTextFile(fileRelativePath);
+			}
 		});
 		buttonPanel.add(b3);
 		
 		JButton b4 = new JButton("Load");//creating instance of JButton  	
-		b4.addActionListener(new ActionListener() {
-		       public void actionPerformed(ActionEvent e) {
-		             // this makes sure the button you are pressing is the button variable
-		             if(e.getSource() == b4) {
-		            	JFileChooser chooser = new JFileChooser();
-	            	    //FileNameExtensionFilter filter = new FileNameExtensionFilter("text");
-	            	    //chooser.setFileFilter(filter);
-	            	    int returnVal = chooser.showOpenDialog(mainPanel);
-	            	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	            	       System.out.println("You chose to open this file: " +
-	            	            chooser.getSelectedFile().getAbsolutePath());
-	            	       try {
-	            	    	   maze.initFromTextFile(chooser.getSelectedFile().getAbsolutePath());
-							} catch (MazeReadingException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-	            	    }
-		             }
-		       }
+		b4.addActionListener(e -> {
+		    JFileChooser chooser = new JFileChooser("./data");
+			int returnVal = chooser.showOpenDialog(mainPanel);
+			if(returnVal == JFileChooser.APPROVE_OPTION) {
+				String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
+				String dirAbsPath = new File(".").getAbsolutePath();
+				int len = dirAbsPath.length();
+				String fileRelativePath = fileAbsPath.substring(len-1);
+				System.out.println("You chose to open this file: " +
+					fileAbsPath + " " + fileRelativePath);
+				try {
+					maze.initFromTextFile(fileRelativePath);
+					// TODO : faire que ça marche avec différentes tailles
+					//setMaze(maze);
+					reset();
+				} catch (MazeReadingException e1) {
+					e1.printStackTrace();
+				}
+			}
 		});
 		buttonPanel.add(b4);
-		
-		JButton b5 = new JButton("va");//creating instance of JButton  		
-		buttonPanel.add(b5);
 	}
 	
-	public void load(Maze maze) {
+	public void setMaze(Maze maze) {
 		this.maze = maze;
 		
 		int width = maze.getWidth();
 		int height = maze.getHeight();
-		
+
 		mazePanel.setLayout(new GridLayout(width, height));
 		
 		UIGrid = new CBox[maze.getWidth()][maze.getHeight()];
@@ -169,5 +146,6 @@ public class Window extends JFrame {
 				UIGrid[i][j].setBackground(originalColor);
 			}
 		}
+		repaint();
 	}
 }

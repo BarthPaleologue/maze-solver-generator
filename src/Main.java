@@ -12,8 +12,7 @@ public class Main {
 		try {
 			// initialisation du labyrinthe à partir d'un fichier
 			maze.initFromTextFile("data/labyrinthe.txt");
-			
-			w.load(maze);
+			w.setMaze(maze);
 		
 		} catch(MazeReadingException e) {
 			e.printStackTrace();
