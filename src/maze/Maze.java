@@ -1,15 +1,17 @@
 package maze;
 import java.io.BufferedReader;
-import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
+
+import java.util.Objects;
 
 import dijkstra.Dijkstra;
-import dijkstra.Previous;
+
+import dijkstra.PreviousInterface;
 import dijkstra.VertexInterface;
 
 public class Maze implements GraphInterface {
@@ -34,13 +36,13 @@ public class Maze implements GraphInterface {
 		for(int i = 0; i < s; i++) {
 			vertexMatrix.add(new VertexInterface[s]);
 			for (int j = 0; j < s; j++) {
-				VertexInterface box = new EBox(this, i, j);
+				VertexInterface box = new EBox(i, j);
 				if(i == 0 && j == 0) {
-					box = new ABox(this, i, j);
+					box = new ABox(i, j);
 					endPoint = box;
 				}
 				if(i == 10 && j == 10) {
-					box = new DBox(this, i, j);
+					box = new DBox(i, j);
 					startPoint = box;
 				}
 
@@ -73,18 +75,18 @@ public class Maze implements GraphInterface {
 	            	
 	            	switch(label) {
 		            	case 'A':
-		            		box = new ABox(this, i, j);
+		            		box = new ABox(i, j);
 		            		endPoint = box;
 		            		break;
 		            	case 'W':
-		            		box = new WBox(this, i, j);
+		            		box = new WBox(i, j);
 		            		break;
 		            	case 'D':
-		            		box = new DBox(this, i, j);
+		            		box = new DBox(i, j);
 		            		startPoint = box;
 		            		break;
 		            	case 'E':
-		            		box = new EBox(this, i, j);
+		            		box = new EBox(i, j);
 		            		break;
 		            	default:
 		            		throw new BoxLabelException(label, i, j);		
@@ -168,10 +170,9 @@ public class Maze implements GraphInterface {
 				writer.append('\n');
 			}                                               
 			writer.flush();
+			writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			writer.close(); 
 		}
 	}
 
@@ -208,8 +209,8 @@ public class Maze implements GraphInterface {
 		return height;
 	}
 	
-	public ArrayList<int[]> solve() {
-		Previous previous = Dijkstra.compute(this);
+	public ArrayList<VertexInterface> solve() {
+		PreviousInterface previous = Dijkstra.compute(this);
 		
 		VertexInterface startPoint = this.getStartPoint();
 
@@ -217,23 +218,27 @@ public class Maze implements GraphInterface {
 		
 		int[] coords = {endPoint.getX(), endPoint.getY()};
 		
-		ArrayList<int[]> path = new ArrayList<>();
+		ArrayList<VertexInterface> path = new ArrayList<>();
 		
 		// détermination du plus court chemin trouvé
 		while(true) {
-			int[] newCoords = previous.get(coords[0], coords[1]);
-			if(startPoint.getX() == newCoords[0] && startPoint.getY() == newCoords[1]) {
-				// si on est revenu au début
+			VertexInterface nextCell = previous.get(this.getCell(coords[0], coords[1]));
+			System.out.println(nextCell);
+
+			if(startPoint == nextCell) {
+				// si on est revenu au début, on a fini de remonter le chemin
 				break;
 			}
 			
-			if(newCoords[0] == -1 && newCoords[1] == -1) {
-				// si on a échoué à revenir au début
-				System.out.println("Could not find a path");
+			if(Objects.isNull(nextCell)) {
+				// si le chemin s'arrête brusquement
+				System.out.println("There is no path between the start point and the end point");
 				break;
 			}
+
+			int[] newCoords = {nextCell.getX(), nextCell.getY()};
 			
-			path.add(newCoords);
+			path.add(nextCell);
 			
 			coords[0] = newCoords[0];
 			coords[1] = newCoords[1];

@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import dijkstra.VertexInterface;
 import maze.Maze;
 import maze.MazeReadingException;
 import sound.MakeSound;
@@ -29,7 +30,7 @@ public class Window extends JFrame {
 
 		// just a little bit of fun
 		MakeSound player = new MakeSound();
-		player.OH();
+		//player.OH();
 		
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
@@ -129,14 +130,12 @@ public class Window extends JFrame {
 		UIGrid[x][y].setBackground(color);
 	}
 	
-	public void display(ArrayList<int[]> path) {
+	public void display(ArrayList<VertexInterface> path) {
 		// on affiche le chemin à l'envers (on a trouvé le plus court de fin vers déb
 		for(int i = path.size() - 1; i >= 0; i--) {
-			int[] pathStone = path.get(i);
-			//System.out.println("["+pathStone[0]+";"+pathStone[1]+"]");
-			
+			VertexInterface nextCell = path.get(i);
 			// on allume la case du chemin
-			this.setCellColor(pathStone[0], pathStone[1], Color.GREEN);
+			this.setCellColor(nextCell.getX(), nextCell.getY(), Color.GREEN);
 		}
 	}
 	

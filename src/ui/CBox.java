@@ -52,13 +52,13 @@ public class CBox extends Box implements MouseListener {
 		switch(e.getButton()) {
 		case 1:
 			setBackground(Color.DARK_GRAY);
-			maze.setCell(x, y, new WBox(maze, x, y));
+			maze.setCell(x, y, new WBox(x, y));
 			break;
 		case 2:
 			break;
 		case 3:
 			setBackground(Color.WHITE);
-			maze.setCell(x, y, new EBox(maze, x, y));
+			maze.setCell(x, y, new EBox(x, y));
 			break;
 		default:
 			setBackground(Color.PINK);

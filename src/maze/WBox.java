@@ -1,7 +1,7 @@
 package maze;
 // case de mur
 public class WBox extends MBox {
-	public WBox(Maze maze, int x, int y) {
-		super(maze, x, y, 'W');
+	public WBox(int x, int y) {
+		super(x, y, 'W');
 	}
 }

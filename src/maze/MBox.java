@@ -1,5 +1,4 @@
 package maze;
-import java.util.ArrayList;
 
 import dijkstra.VertexInterface;
 
@@ -7,15 +6,11 @@ public abstract class MBox implements VertexInterface {
 	private final int _x;
 	private final int _y;
 	
-	private Maze _maze;
+	private final char _label;
 	
-	private char _label;
-	
-	public MBox(Maze maze, int x, int y, char label) {
+	public MBox(int x, int y, char label) {
 		_x = x;
 		_y = y;
-		
-		_maze = maze;
 
 		_label = label;
 	}
@@ -30,10 +25,6 @@ public abstract class MBox implements VertexInterface {
 	
 	public char getLabel() {
 		return _label;
-	}
-	
-	public ArrayList<VertexInterface> getNeighbors() {
-		return _maze.getNeighbors(this);
 	}
 	
 	@Override

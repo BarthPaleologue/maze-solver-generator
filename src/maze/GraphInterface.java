@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import dijkstra.VertexInterface;
 
 public interface GraphInterface {
-	
-	public ArrayList<VertexInterface> getNeighbors(VertexInterface vertex);
-	
-
+	// TODO : ajouter du matos
+	ArrayList<VertexInterface> getNeighbors(VertexInterface vertex);
 }

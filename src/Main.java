@@ -9,14 +9,13 @@ public class Main {
 		
 		Window w = new Window("PROJEEEET");
 
-		//try {
+		try {
 			// initialisation du labyrinthe à partir d'un fichier
-			//maze.initFromTextFile("data/labyrinthe.txt");
-			maze.initSquared(100);
+			maze.initFromTextFile("data/labyrinthe.txt");
 			w.initMazeUI(maze);
 		
-		/*} catch(MazeReadingException e) {
+		} catch(MazeReadingException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 }
