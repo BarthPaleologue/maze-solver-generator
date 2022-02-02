@@ -1,6 +1,7 @@
 package dijkstra;
 
 public interface PiInterface {
-	public int get(int vertex);
-	public void set(int vertex, int value);
+	int get(VertexInterface vertex);
+	void set(VertexInterface vertex, int value);
+	boolean contains(VertexInterface vertex);
 }
