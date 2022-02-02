@@ -62,12 +62,12 @@ public class Dijkstra {
 			visitedSet.add(pivot);
 		}
 		
-		System.out.println();
-		System.out.println(previous.toString());
+		//System.out.println();
+		//System.out.println(previous.toString());
 		
-		System.out.println();
-		String output2 = Arrays.deepToString(PI).replace("],", "],\n");
-		System.out.println(output2);
+		//System.out.println();
+		//String output2 = Arrays.deepToString(PI).replace("],", "],\n");
+		//System.out.println(output2);
 		
 		
 		

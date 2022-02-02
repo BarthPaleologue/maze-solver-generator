@@ -11,11 +11,13 @@ public abstract class MBox implements VertexInterface {
 	
 	private char _label;
 	
-	public MBox(Maze maze, int x, int y) {
+	public MBox(Maze maze, int x, int y, char label) {
 		_x = x;
 		_y = y;
 		
 		_maze = maze;
+
+		_label = label;
 	}
 	
 	public int getX() {
@@ -30,16 +32,12 @@ public abstract class MBox implements VertexInterface {
 		return _label;
 	}
 	
-	public void setLabel(char newLabel) {
-		_label = newLabel;
-	}
-	
 	public ArrayList<VertexInterface> getNeighbors() {
 		return _maze.getNeighbors(this);
 	}
 	
 	@Override
 	public String toString() {
-		return "["+_x+";"+_y+";"+_label+"]";
+		return "[" + _x + ";" + _y + ";" + _label + "]";
 	}
 }

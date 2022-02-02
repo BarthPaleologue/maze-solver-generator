@@ -18,15 +18,17 @@ import maze.MazeReadingException;
 import sound.MakeSound;
 
 public class Window extends JFrame {
-	JPanel mazePanel;
-	CBox[][] UIGrid;
-	Maze maze;
-	MakeSound player;
+	private final JPanel mazePanel;
+	private CBox[][] UIGrid;
+	private Maze maze;
+	public static int DEFAULT_WIDTH = 600;
+	public static int DEFAULT_HEIGHT = 650;
 	
 	public Window(String title) {
 		super(title);
-		
-		player = new MakeSound();
+
+		// just a little bit of fun
+		MakeSound player = new MakeSound();
 		player.OH();
 		
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -82,8 +84,7 @@ public class Window extends JFrame {
 					fileAbsPath + " " + fileRelativePath);
 				try {
 					maze.initFromTextFile(fileRelativePath);
-					// TODO : faire que ça marche avec différentes tailles
-					//setMaze(maze);
+					initMazeUI(maze);
 					reset();
 				} catch (MazeReadingException e1) {
 					e1.printStackTrace();
@@ -93,22 +94,22 @@ public class Window extends JFrame {
 		buttonPanel.add(b4);
 	}
 	
-	public void setMaze(Maze maze) {
+	public void initMazeUI(Maze maze) {
 		this.maze = maze;
 		
-		int width = maze.getWidth();
-		int height = maze.getHeight();
+		int width = this.maze.getWidth();
+		int height = this.maze.getHeight();
 
+		mazePanel.removeAll(); // remove components of last maze (necessary when changing maze size)
 		mazePanel.setLayout(new GridLayout(width, height));
 		
 		UIGrid = new CBox[maze.getWidth()][maze.getHeight()];
 		
 		for(int i = 0; i < width; i++) {
 			for(int j = 0; j < height; j++) {
-				CBox box = new CBox(BoxLayout.X_AXIS, this.maze, i, j);
-				box.setBorder(BorderFactory.createLineBorder(Color.black));
+				CBox box = new CBox(this.maze, i, j);
+				box.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 				box.setBounds(i, j, 1, 1);
-				box.setOpaque(true);
 
 				Color color = CBox.getColorFromLabel(maze.getCell(i, j).getLabel());
 				
@@ -120,7 +121,7 @@ public class Window extends JFrame {
 			}
 		}
 		
-		this.setSize(600, 650);
+		this.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 		this.setVisible(true);
 	}
 	

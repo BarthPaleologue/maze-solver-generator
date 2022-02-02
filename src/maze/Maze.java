@@ -25,14 +25,32 @@ public class Maze implements GraphInterface {
 	private int height;
 	
 	public Maze() {
-		
 		graph = null;
-		
+		vertexMatrix = null;
+	}
+
+	public void initSquared(int s) {
 		vertexMatrix = new ArrayList<>();
+		for(int i = 0; i < s; i++) {
+			vertexMatrix.add(new VertexInterface[s]);
+			for (int j = 0; j < s; j++) {
+				VertexInterface box = new EBox(this, i, j);
+				if(i == 0 && j == 0) {
+					box = new ABox(this, i, j);
+					endPoint = box;
+				}
+				if(i == 10 && j == 10) {
+					box = new DBox(this, i, j);
+					startPoint = box;
+				}
+
+				vertexMatrix.get(i)[j] = box;
+			}
+		}
+		initGraph();
 	}
 	
 	public void initFromTextFile(String fileName) throws MazeReadingException {
-
 		FileReader fr = null;
 		BufferedReader br = null;
 		
@@ -41,8 +59,7 @@ public class Maze implements GraphInterface {
 			 fr = new FileReader(fileName);    
 	         br = new BufferedReader(fr);
 
-
-			vertexMatrix = new ArrayList<>();
+			 vertexMatrix = new ArrayList<>();
 	         
 	         int i = 0;
 	         for(String line = br.readLine(); line != null; line = br.readLine()) {
@@ -95,6 +112,8 @@ public class Maze implements GraphInterface {
 	private void initGraph() {
 		width = vertexMatrix.size();
 		height = vertexMatrix.get(0).length;
+
+		System.out.println("Current Maze is of size : " + width + "x" + height);
 		
 		graph = new ArrayList[width][height];
          
@@ -104,9 +123,8 @@ public class Maze implements GraphInterface {
         		 graph[x][y] = new ArrayList<>();
         		 
         		 VertexInterface vertex = vertexMatrix.get(x)[y];
-        		 char label = vertex.getLabel();
         		 
-        		 if(label == 'W') continue; // un mur n'a pas de voisins
+        		 if(vertex.getLabel() == 'W') continue; // un mur n'a pas de voisins, on saute les checks
         		 
         		 if(x > 0 && vertexMatrix.get(x-1)[y].getLabel() != 'W') {
         			 // voisin de gauche accessible
@@ -130,10 +148,15 @@ public class Maze implements GraphInterface {
         	 }
          }
 
-		String output = Arrays.deepToString(graph).replace("[[[", "\n[[[");
-		System.out.println(output);
+		//String output = Arrays.deepToString(graph).replace("[[[", "\n[[[");
+		//System.out.println("Graph representation of maze : ");
+		//System.out.println(output);
 	}
-	
+
+	/**
+	 * Saves the current maze state to the given file
+	 * fileName : the name of the file to save to
+	 **/
 	public final void saveToTextFile(String fileName) {
 		PrintWriter writer = null;
 		try {
@@ -151,7 +174,11 @@ public class Maze implements GraphInterface {
 			writer.close(); 
 		}
 	}
-	
+
+	/**
+	 *
+	 *
+	 * */
 	public VertexInterface getCell(int x, int y) {
 		return vertexMatrix.get(x)[y];
 	}
