@@ -1,63 +1,106 @@
 package ui;
 
-import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import dijkstra.VertexInterface;
 import maze.Maze;
-import maze.MazeReadingException;
-import sound.MakeSound;
 
 public class Window extends JFrame {
-	private final JPanel mazePanel;
-	private CBox[][] UIGrid;
+	private final MazePanel mazePanel;
 	private Maze maze;
 	public static int DEFAULT_WIDTH = 600;
-	public static int DEFAULT_HEIGHT = 650;
+	public static int DEFAULT_HEIGHT = 660;
 	
 	public Window(String title) {
 		super(title);
-
-		// just a little bit of fun
-		MakeSound player = new MakeSound();
-		//player.OH();
 		
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		this.add(mainPanel);
-		
-		mazePanel = new JPanel();
+
+		int width = Integer.parseInt((String)JOptionPane.showInputDialog(
+				this,
+				"Maze Width :",
+				"Initialization Phase",
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				null,
+				"10"));
+
+		int height = Integer.parseInt((String) JOptionPane.showInputDialog(
+				this,
+				"Maze Height :",
+				"Initialization Phase",
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				null,
+				"10"));
+
+		maze = new Maze(width, height);
+		mazePanel = new MazePanel(maze.getWidth(), maze.getHeight());
 		mainPanel.add(mazePanel);
 		
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		mainPanel.add(buttonPanel);
-		
-		JButton b1 = new JButton("Compute"); 
-		b1.addActionListener(e -> {
-			  reset();
-			  display(maze.solve());
+
+		JButton emptyButton = new JButton("Empty");
+		emptyButton.addActionListener(e -> {
+			int newWidth = Integer.parseInt((String)JOptionPane.showInputDialog(
+					this,
+					"Maze Width :",
+					"Initialization Phase",
+					JOptionPane.PLAIN_MESSAGE,
+					null,
+					null,
+					"10"));
+
+			int newHeight = Integer.parseInt((String) JOptionPane.showInputDialog(
+					this,
+					"Maze Height :",
+					"Initialization Phase",
+					JOptionPane.PLAIN_MESSAGE,
+					null,
+					null,
+					"10"));
+			maze.initEmpty(newWidth, newHeight);
+			initMazeUI();
 		});
-		buttonPanel.add(b1);
+		buttonPanel.add(emptyButton);
+
+		JButton departureButton = new JButton("Set Departure");
+		departureButton.addActionListener(e -> {
+			mazePanel.setDepartureMode(true);
+		});
+		buttonPanel.add(departureButton);
+
+		JButton arrivalButton = new JButton("Set Arrival");
+		arrivalButton.addActionListener(e -> {
+			mazePanel.setArrivalMode(true);
+		});
+		buttonPanel.add(arrivalButton);
 		
-		JButton b2 = new JButton("Reset");
-		b2.addActionListener(e -> reset());
-		buttonPanel.add(b2);
+		JButton computeButton = new JButton("Compute");
+		computeButton.addActionListener(e -> {
+			  reset();
+			  displayPath(maze.solve());
+		});
+		//computeButton.setEnabled(false);
+		buttonPanel.add(computeButton);
 		
-		JButton b3 = new JButton("Save");//creating instance of JButton  
-		b3.addActionListener(e -> {
+		JButton clearPathButton = new JButton("Clear Path");
+		clearPathButton.addActionListener(e -> reset());
+		buttonPanel.add(clearPathButton);
+		
+		JButton saveButton = new JButton("Save");//creating instance of JButton
+		saveButton.addActionListener(e -> {
 			JFileChooser chooser = new JFileChooser("./data");
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -70,10 +113,10 @@ public class Window extends JFrame {
 				 maze.saveToTextFile(fileRelativePath);
 			}
 		});
-		buttonPanel.add(b3);
+		buttonPanel.add(saveButton);
 		
-		JButton b4 = new JButton("Load");//creating instance of JButton  	
-		b4.addActionListener(e -> {
+		JButton loadButton = new JButton("Load");//creating instance of JButton
+		loadButton.addActionListener(e -> {
 		    JFileChooser chooser = new JFileChooser("./data");
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
@@ -83,69 +126,32 @@ public class Window extends JFrame {
 				String fileRelativePath = fileAbsPath.substring(len-1);
 				System.out.println("You chose to open this file: " +
 					fileAbsPath + " " + fileRelativePath);
-				try {
-					maze.initFromTextFile(fileRelativePath);
-					initMazeUI(maze);
-					reset();
-				} catch (MazeReadingException e1) {
-					e1.printStackTrace();
+
+				maze.initFromTextFile(fileRelativePath);
+				if(maze.getWidth() > 0 && maze.getHeight() > 0) {
+					initMazeUI();
 				}
+
 			}
 		});
-		buttonPanel.add(b4);
-	}
-	
-	public void initMazeUI(Maze maze) {
-		this.maze = maze;
-		
-		int width = this.maze.getWidth();
-		int height = this.maze.getHeight();
-
-		mazePanel.removeAll(); // remove components of last maze (necessary when changing maze size)
-		mazePanel.setLayout(new GridLayout(width, height));
-		
-		UIGrid = new CBox[maze.getWidth()][maze.getHeight()];
-		
-		for(int i = 0; i < width; i++) {
-			for(int j = 0; j < height; j++) {
-				CBox box = new CBox(this.maze, i, j);
-				box.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-				box.setBounds(i, j, 1, 1);
-
-				Color color = CBox.getColorFromLabel(maze.getCell(i, j).getLabel());
-				
-				box.setBackground(color);
-				mazePanel.add(box);
-				
-				UIGrid[i][j] = box;
-				
-			}
-		}
-		
-		this.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		buttonPanel.add(loadButton);
 		this.setVisible(true);
+
+		initMazeUI();
 	}
 	
-	public void setCellColor(int x, int y, Color color) {
-		UIGrid[x][y].setBackground(color);
+	public void initMazeUI() {
+		mazePanel.initMazeUI(maze);
+		this.pack();
 	}
 	
-	public void display(ArrayList<VertexInterface> path) {
-		// on affiche le chemin à l'envers (on a trouvé le plus court de fin vers déb
-		for(int i = path.size() - 1; i >= 0; i--) {
-			VertexInterface nextCell = path.get(i);
-			// on allume la case du chemin
-			this.setCellColor(nextCell.getX(), nextCell.getY(), Color.GREEN);
+	public void displayPath(ArrayList<VertexInterface> path) {
+		for(int i = 0; i < path.size(); i++) {
+			mazePanel.setCellColor(path.get(i).getX(), path.get(i).getY(), Color.GREEN);
 		}
 	}
 	
 	public void reset() {
-		for(int i = 0; i < maze.getWidth(); i++) {
-			for(int j = 0; j < maze.getHeight(); j++) {
-				Color originalColor = CBox.getColorFromLabel(maze.getCell(i, j).getLabel());
-				UIGrid[i][j].setBackground(originalColor);
-			}
-		}
-		repaint();
+		mazePanel.reset();
 	}
 }

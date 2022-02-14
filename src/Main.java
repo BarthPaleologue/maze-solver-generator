@@ -1,21 +1,20 @@
 import maze.Maze;
-import maze.MazeReadingException;
+import sound.MakeSound;
 import ui.Window;
 
 public class Main {
 	
 	public static void main(String[] args) {
-		Maze maze = new Maze();
-		
-		Window w = new Window("PROJEEEET");
+		Window mainWindow = new Window("PROJEEEET");
 
-		try {
-			// initialisation du labyrinthe à partir d'un fichier
+		// just a little bit of fun
+		MakeSound player = new MakeSound();
+		player.OH();
+
+		/*try {
 			maze.initFromTextFile("data/labyrinthe.txt");
-			w.initMazeUI(maze);
-		
 		} catch(MazeReadingException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 }

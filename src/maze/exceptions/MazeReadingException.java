@@ -1,4 +1,4 @@
-package maze;
+package maze.exceptions;
 
 public class MazeReadingException extends Exception {
 	/**
