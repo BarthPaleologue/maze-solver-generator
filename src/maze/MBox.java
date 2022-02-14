@@ -26,6 +26,21 @@ public abstract class MBox implements VertexInterface {
 	public char getLabel() {
 		return _label;
 	}
+
+	public static VertexInterface CreateFromLabel(char label, int x, int y) throws BoxLabelException {
+		switch(label) {
+			case 'A':
+				return new ABox(x, y);
+			case 'W':
+				return new WBox(x, y);
+			case 'D':
+				return new DBox(x, y);
+			case 'E':
+				return new EBox(x, y);
+			default:
+				throw new BoxLabelException(label, x, y);
+		}
+	}
 	
 	@Override
 	public String toString() {
