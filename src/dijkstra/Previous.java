@@ -7,7 +7,7 @@ public class Previous implements PreviousInterface {
 	
 	private final Hashtable<VertexInterface, VertexInterface> htab;
 	
-	Previous(int width, int height) {
+	Previous() {
 		htab = new Hashtable<>();
 	}
 

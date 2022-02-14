@@ -1,13 +1,13 @@
 package dijkstra;
 
-import maze.Maze;
+import maze.GraphInterface;
 
 public class Dijkstra {
-	public static PreviousInterface compute(Maze maze) {
+	public static PreviousInterface compute(GraphInterface maze) {
 		ASetInterface markedSet = new ASet();
 		ASetInterface visitedSet = new ASet();
 		
-		PreviousInterface previous = new Previous(maze.getWidth(), maze.getHeight());
+		PreviousInterface previous = new Previous();
 
 		PiInterface pi = new Pi();
 
