@@ -43,6 +43,8 @@ public class Maze implements GraphInterface {
 	public void initEmpty(int width, int height) {
 		this.width = width;
 		this.height = height;
+		this.startPoint = null;
+		this.endPoint = null;
 		vertexMatrix = new ArrayList<>();
 		for(int x = 0; x < width; x++) {
 			vertexMatrix.add(new VertexInterface[height]);
@@ -295,6 +297,8 @@ public class Maze implements GraphInterface {
 
 				if (nextCell == null) {
 					// si le chemin s'arrête brusquement
+					// TODO: en faire une exception ?
+					System.out.println();
 					System.out.println("There is no path between the start point and the end point");
 					break;
 				}
@@ -303,6 +307,7 @@ public class Maze implements GraphInterface {
 
 				currentCell = nextCell;
 			}
+			System.out.println();
 
 			return path;
 		} catch(MazeStartPointException | MazeEndPointException e) {

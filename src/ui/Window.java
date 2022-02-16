@@ -5,21 +5,41 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import dijkstra.VertexInterface;
 import maze.Maze;
 
-public class Window extends JFrame {
+public class Window extends JFrame implements ChangeListener {
 	private final MazePanel mazePanel;
 	private Maze maze;
 	public static int DEFAULT_WIDTH = 600;
-	public static int DEFAULT_HEIGHT = 660;
+	public static int DEFAULT_HEIGHT = 670;
 	
 	public Window(String title) {
 		super(title);
 		
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+
+		JMenuBar menuBar = new JMenuBar();
+		this.add(menuBar);
+		this.setJMenuBar(menuBar);
+
+		JMenu fileMenu = new JMenu("Maze File");
+		JButton departureButton = new JButton("Set departure");
+		JButton arrivalButton = new JButton("Set Arrival");
+		menuBar.add(fileMenu);
+		menuBar.add(departureButton);
+		menuBar.add(arrivalButton);
+
+		JMenuItem newEmptyItem = new JMenuItem("New empty maze");
+		JMenuItem openFileItem = new JMenuItem("Open maze file");
+		JMenuItem saveFileItem = new JMenuItem("Save maze to file");
+		fileMenu.add(newEmptyItem);
+		fileMenu.add(openFileItem);
+		fileMenu.add(saveFileItem);
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -45,14 +65,10 @@ public class Window extends JFrame {
 
 		maze = new Maze(width, height);
 		mazePanel = new MazePanel(maze.getWidth(), maze.getHeight());
+		mazePanel.addChangeListener(this);
 		mainPanel.add(mazePanel);
-		
-		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-		mainPanel.add(buttonPanel);
 
-		JButton emptyButton = new JButton("Empty");
-		emptyButton.addActionListener(e -> {
+		newEmptyItem.addActionListener(e -> {
 			int newWidth = Integer.parseInt((String)JOptionPane.showInputDialog(
 					this,
 					"Maze Width :",
@@ -73,34 +89,12 @@ public class Window extends JFrame {
 			maze.initEmpty(newWidth, newHeight);
 			initMazeUI();
 		});
-		buttonPanel.add(emptyButton);
 
-		JButton departureButton = new JButton("Set Departure");
-		departureButton.addActionListener(e -> {
-			mazePanel.setDepartureMode(true);
-		});
-		buttonPanel.add(departureButton);
+		departureButton.addActionListener(e -> mazePanel.setDepartureMode(true));
 
-		JButton arrivalButton = new JButton("Set Arrival");
-		arrivalButton.addActionListener(e -> {
-			mazePanel.setArrivalMode(true);
-		});
-		buttonPanel.add(arrivalButton);
-		
-		JButton computeButton = new JButton("Compute");
-		computeButton.addActionListener(e -> {
-			  reset();
-			  displayPath(maze.solve());
-		});
-		//computeButton.setEnabled(false);
-		buttonPanel.add(computeButton);
-		
-		JButton clearPathButton = new JButton("Clear Path");
-		clearPathButton.addActionListener(e -> reset());
-		buttonPanel.add(clearPathButton);
-		
-		JButton saveButton = new JButton("Save");//creating instance of JButton
-		saveButton.addActionListener(e -> {
+		arrivalButton.addActionListener(e -> mazePanel.setArrivalMode(true));
+
+		saveFileItem.addActionListener(e -> {
 			JFileChooser chooser = new JFileChooser("./data");
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -113,10 +107,8 @@ public class Window extends JFrame {
 				 maze.saveToTextFile(fileRelativePath);
 			}
 		});
-		buttonPanel.add(saveButton);
-		
-		JButton loadButton = new JButton("Load");//creating instance of JButton
-		loadButton.addActionListener(e -> {
+
+		openFileItem.addActionListener(e -> {
 		    JFileChooser chooser = new JFileChooser("./data");
 			int returnVal = chooser.showOpenDialog(mainPanel);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
@@ -134,7 +126,6 @@ public class Window extends JFrame {
 
 			}
 		});
-		buttonPanel.add(loadButton);
 		this.setVisible(true);
 
 		initMazeUI();
@@ -150,8 +141,9 @@ public class Window extends JFrame {
 			mazePanel.setCellColor(path.get(i).getX(), path.get(i).getY(), Color.GREEN);
 		}
 	}
-	
-	public void reset() {
-		mazePanel.reset();
+
+	@Override
+	public void stateChanged(ChangeEvent changeEvent) {
+		displayPath(maze.solve());
 	}
 }

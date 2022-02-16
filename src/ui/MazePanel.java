@@ -6,9 +6,12 @@ import maze.Maze;
 import maze.WBox;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 public class MazePanel extends JPanel implements MouseListener {
     private int nbCellsX;
@@ -21,6 +24,8 @@ public class MazePanel extends JPanel implements MouseListener {
 
     private CellPanel[][] UIGrid = null;
 
+    private ArrayList<ChangeListener> listeners;
+
     public MazePanel(int nbCellsX, int nbCellsY) {
         super();
 
@@ -28,12 +33,8 @@ public class MazePanel extends JPanel implements MouseListener {
         this.nbCellsY = nbCellsY;
 
         addMouseListener(this);
-    }
 
-    public void setGridLayout(int width, int height) {
-        this.setLayout(new GridLayout(width, height));
-        this.nbCellsX = width;
-        this.nbCellsY = height;
+        listeners = new ArrayList<>();
     }
 
     public void initMazeUI(Maze maze) {
@@ -55,6 +56,7 @@ public class MazePanel extends JPanel implements MouseListener {
                 UIGrid[i][j] = cell;
             }
         }
+        stateChanges();
     }
 
     public void setDepartureMode(boolean flag) {
@@ -76,6 +78,18 @@ public class MazePanel extends JPanel implements MouseListener {
                 Color originalColor = CellPanel.getColorFromLabel(maze.getCell(i, j).getLabel());
                 UIGrid[i][j].setBackground(originalColor);
             }
+        }
+        stateChanges();
+    }
+
+    public void addChangeListener(ChangeListener listener) {
+        listeners.add(listener);
+    }
+
+    public void stateChanges() {
+        ChangeEvent e = new ChangeEvent(this);
+        for(ChangeListener listener: listeners) {
+            listener.stateChanged(e);
         }
     }
 
@@ -110,6 +124,7 @@ public class MazePanel extends JPanel implements MouseListener {
             default:
         }
         reset();
+        stateChanges();
     }
 
     @Override
