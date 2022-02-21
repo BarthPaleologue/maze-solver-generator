@@ -49,6 +49,7 @@ public class Window extends JFrame implements ChangeListener {
 				null,
 				null,
 				"10"));
+		width = Math.max(1, width);
 
 		int height = Integer.parseInt((String) JOptionPane.showInputDialog(
 				this,
@@ -58,6 +59,10 @@ public class Window extends JFrame implements ChangeListener {
 				null,
 				null,
 				"10"));
+		height = Math.max(1, height);
+
+		//TODO: exception pour les valeurs négatives
+
 
 		maze = new Maze(width, height);
 		maze.addListener(this);
@@ -74,6 +79,7 @@ public class Window extends JFrame implements ChangeListener {
 					null,
 					null,
 					"10"));
+			newWidth = Math.max(1, newWidth);
 
 			int newHeight = Integer.parseInt((String) JOptionPane.showInputDialog(
 					this,
@@ -83,6 +89,8 @@ public class Window extends JFrame implements ChangeListener {
 					null,
 					null,
 					"10"));
+			newHeight = Math.max(1, newHeight);
+
 			maze.initEmpty(newWidth, newHeight);
 			initMazeUI();
 		});
@@ -95,10 +103,10 @@ public class Window extends JFrame implements ChangeListener {
 			JFileChooser chooser = new JFileChooser("./data");
 			int returnVal = chooser.showOpenDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				// calcul du chemin relatif à l'aide de soustractions de chaines de caractères
 				 String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
 				 String dirAbsPath = new File(".").getAbsolutePath();
-				 int len = dirAbsPath.length();
-				 String fileRelativePath = fileAbsPath.substring(len - 1);
+				 String fileRelativePath = fileAbsPath.substring(dirAbsPath.length() - 1);
 				 System.out.println("You chose to save to this file: " + fileAbsPath + " " + fileRelativePath);
 
 				 maze.saveToTextFile(fileRelativePath);

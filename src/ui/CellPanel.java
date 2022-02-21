@@ -6,12 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CellPanel extends JPanel {
-    private final Maze maze;
     private final int x;
     private final int y;
-    public CellPanel(Maze maze, int x, int y) {
+    public CellPanel(int x, int y) {
         super();
-        this.maze = maze;
         this.x = x;
         this.y = y;
     }

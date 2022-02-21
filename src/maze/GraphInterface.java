@@ -9,6 +9,7 @@ public interface GraphInterface {
 	void initFromTextFile(String fileName) throws MazeReadingException;
 	void saveToTextFile(String fileName);
 	VertexInterface getCell(int x, int y);
+	char getLabelFromCoords(int x, int y);
 	ArrayList<VertexInterface> getNeighbors(VertexInterface vertex);
 	void setCell(int x, int y, VertexInterface cell);
 	void setStartPoint(int x, int y);

@@ -194,6 +194,10 @@ public class Maze implements GraphInterface {
 		return vertexMatrix.get(x)[y];
 	}
 
+	public char getLabelFromCoords(int x, int y) {
+		return getCell(x, y).getLabel();
+	}
+
 	/**
 	 * Returns the list of all known neighbors of a given vertex
 	 * @param vertex the vertex you want to know the neighbors of

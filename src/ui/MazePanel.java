@@ -49,8 +49,8 @@ public class MazePanel extends JPanel implements MouseListener {
 
         for(int i = 0; i < nbCellsX; i++) {
             for(int j = 0; j < nbCellsY; j++) {
-                CellPanel cell = new CellPanel(maze, i, j);
-                cell.setBackground(CellPanel.getColorFromLabel(maze.getCell(i,j).getLabel()));
+                CellPanel cell = new CellPanel(i, j);
+                cell.setBackground(CellPanel.getColorFromLabel(maze.getLabelFromCoords(i, j)));
                 add(cell);
 
                 UIGrid[i][j] = cell;
