@@ -14,6 +14,9 @@ import dijkstra.PreviousInterface;
 import dijkstra.VertexInterface;
 import maze.exceptions.*;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 public class Maze implements GraphInterface {
 
 	private ArrayList<VertexInterface[]> vertexMatrix;
@@ -22,6 +25,8 @@ public class Maze implements GraphInterface {
 	
 	private VertexInterface startPoint = null;
 	private VertexInterface endPoint = null;
+
+	private ArrayList<ChangeListener> listeners = new ArrayList<>();
 	
 	private int width = 0;
 	private int height = 0;
@@ -314,5 +319,16 @@ public class Maze implements GraphInterface {
 			e.printStackTrace();
 		}
 		return new ArrayList<>();
+	}
+
+	public void addListener(ChangeListener listener) {
+		listeners.add(listener);
+	}
+
+	private void stateChanges() {
+		ChangeEvent e = new ChangeEvent(this);
+		for(ChangeListener listener: listeners) {
+			listener.stateChanged(e);
+		}
 	}
 } 

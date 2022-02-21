@@ -99,8 +99,8 @@ public class MazePanel extends JPanel implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         // TODO: j'ai inversé x et y oups
-        int cellX = e.getY() * nbCellsX / getWidth();
-        int cellY = e.getX() * nbCellsY / getHeight();
+        int cellX = e.getY() * nbCellsX / getHeight();
+        int cellY = e.getX() * nbCellsY / getWidth();
 
         //// 1 = LC ; 2 = MC ; 3 = RC
         switch(e.getButton()) {

@@ -23,7 +23,7 @@ public class Window extends JFrame implements ChangeListener {
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
-		JMenuBar menuBar = new JMenuBar();
+		JMenuBar menuBar = new Menu(maze);
 		this.add(menuBar);
 		this.setJMenuBar(menuBar);
 
@@ -40,10 +40,6 @@ public class Window extends JFrame implements ChangeListener {
 		fileMenu.add(newEmptyItem);
 		fileMenu.add(openFileItem);
 		fileMenu.add(saveFileItem);
-		
-		JPanel mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		this.add(mainPanel);
 
 		int width = Integer.parseInt((String)JOptionPane.showInputDialog(
 				this,
@@ -64,9 +60,10 @@ public class Window extends JFrame implements ChangeListener {
 				"10"));
 
 		maze = new Maze(width, height);
+		maze.addListener(this);
 		mazePanel = new MazePanel(maze.getWidth(), maze.getHeight());
 		mazePanel.addChangeListener(this);
-		mainPanel.add(mazePanel);
+		this.add(mazePanel);
 
 		newEmptyItem.addActionListener(e -> {
 			int newWidth = Integer.parseInt((String)JOptionPane.showInputDialog(
@@ -96,7 +93,7 @@ public class Window extends JFrame implements ChangeListener {
 
 		saveFileItem.addActionListener(e -> {
 			JFileChooser chooser = new JFileChooser("./data");
-			int returnVal = chooser.showOpenDialog(mainPanel);
+			int returnVal = chooser.showOpenDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				 String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
 				 String dirAbsPath = new File(".").getAbsolutePath();
@@ -110,7 +107,7 @@ public class Window extends JFrame implements ChangeListener {
 
 		openFileItem.addActionListener(e -> {
 		    JFileChooser chooser = new JFileChooser("./data");
-			int returnVal = chooser.showOpenDialog(mainPanel);
+			int returnVal = chooser.showOpenDialog(this);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
 				String dirAbsPath = new File(".").getAbsolutePath();
@@ -143,7 +140,7 @@ public class Window extends JFrame implements ChangeListener {
 	}
 
 	@Override
-	public void stateChanged(ChangeEvent changeEvent) {
-		displayPath(maze.solve());
+	public void stateChanged(ChangeEvent e) {
+		if(e.getSource() == mazePanel) displayPath(maze.solve());
 	}
 }
