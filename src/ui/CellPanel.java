@@ -1,17 +1,14 @@
 package ui;
 
-import maze.Maze;
-
 import javax.swing.*;
 import java.awt.*;
 
+import maze.Labels;
+
 public class CellPanel extends JPanel {
-    private final int x;
-    private final int y;
-    public CellPanel(int x, int y) {
+    public CellPanel() {
         super();
-        this.x = x;
-        this.y = y;
+        setBackground(Color.WHITE);
     }
 
     @Override
@@ -22,13 +19,13 @@ public class CellPanel extends JPanel {
 
     public static Color getColorFromLabel(char label) {
         switch(label) {
-            case 'A':
+            case Labels.ARRIVAL:
                 return Color.RED;
-            case 'D':
+            case Labels.DEPARTURE:
                 return Color.BLUE;
-            case 'W':
+            case Labels.WALL:
                 return Color.DARK_GRAY;
-            case 'E':
+            case Labels.EMPTY:
                 return Color.WHITE;
             default:
                 return Color.PINK;

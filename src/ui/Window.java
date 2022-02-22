@@ -1,7 +1,6 @@
 package ui;
 
 import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -13,33 +12,24 @@ import maze.Maze;
 
 public class Window extends JFrame implements ChangeListener {
 	private final MazePanel mazePanel;
-	private Maze maze;
-	public static int DEFAULT_WIDTH = 600;
-	public static int DEFAULT_HEIGHT = 670;
+	private final Maze maze;
+	public static final int DEFAULT_WIDTH = 600;
+	public static final int DEFAULT_HEIGHT = 670;
+
+	private int mazeWidth = 0;
+	private int mazeHeight = 0;
+
+	private int editionState = EditionState.WALL;
 	
-	public Window(String title) {
-		super(title);
+	public Window() {
+		super("MAZE SOLVER");
 		
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
-		JMenuBar menuBar = new Menu(maze);
+		JMenuBar menuBar = new Menu(this);
 		this.add(menuBar);
 		this.setJMenuBar(menuBar);
-
-		JMenu fileMenu = new JMenu("Maze File");
-		JButton departureButton = new JButton("Set departure");
-		JButton arrivalButton = new JButton("Set Arrival");
-		menuBar.add(fileMenu);
-		menuBar.add(departureButton);
-		menuBar.add(arrivalButton);
-
-		JMenuItem newEmptyItem = new JMenuItem("New empty maze");
-		JMenuItem openFileItem = new JMenuItem("Open maze file");
-		JMenuItem saveFileItem = new JMenuItem("Save maze to file");
-		fileMenu.add(newEmptyItem);
-		fileMenu.add(openFileItem);
-		fileMenu.add(saveFileItem);
 
 		int width = Integer.parseInt((String)JOptionPane.showInputDialog(
 				this,
@@ -61,94 +51,80 @@ public class Window extends JFrame implements ChangeListener {
 				"10"));
 		height = Math.max(1, height);
 
-		//TODO: exception pour les valeurs négatives
-
-
-		maze = new Maze(width, height);
+		//TODO: j'ai inversé aled
+		maze = new Maze(height, width);
 		maze.addListener(this);
-		mazePanel = new MazePanel(maze.getWidth(), maze.getHeight());
-		mazePanel.addChangeListener(this);
+
+		mazePanel = new MazePanel(maze.getWidth(), maze.getHeight(), this);
+
 		this.add(mazePanel);
 
-		newEmptyItem.addActionListener(e -> {
-			int newWidth = Integer.parseInt((String)JOptionPane.showInputDialog(
-					this,
-					"Maze Width :",
-					"Initialization Phase",
-					JOptionPane.PLAIN_MESSAGE,
-					null,
-					null,
-					"10"));
-			newWidth = Math.max(1, newWidth);
-
-			int newHeight = Integer.parseInt((String) JOptionPane.showInputDialog(
-					this,
-					"Maze Height :",
-					"Initialization Phase",
-					JOptionPane.PLAIN_MESSAGE,
-					null,
-					null,
-					"10"));
-			newHeight = Math.max(1, newHeight);
-
-			maze.initEmpty(newWidth, newHeight);
-			initMazeUI();
-		});
-
-		departureButton.addActionListener(e -> mazePanel.setDepartureMode(true));
-
-		arrivalButton.addActionListener(e -> mazePanel.setArrivalMode(true));
-
-		saveFileItem.addActionListener(e -> {
-			JFileChooser chooser = new JFileChooser("./data");
-			int returnVal = chooser.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				// calcul du chemin relatif à l'aide de soustractions de chaines de caractères
-				 String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
-				 String dirAbsPath = new File(".").getAbsolutePath();
-				 String fileRelativePath = fileAbsPath.substring(dirAbsPath.length() - 1);
-				 System.out.println("You chose to save to this file: " + fileAbsPath + " " + fileRelativePath);
-
-				 maze.saveToTextFile(fileRelativePath);
-			}
-		});
-
-		openFileItem.addActionListener(e -> {
-		    JFileChooser chooser = new JFileChooser("./data");
-			int returnVal = chooser.showOpenDialog(this);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
-				String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
-				String dirAbsPath = new File(".").getAbsolutePath();
-				int len = dirAbsPath.length();
-				String fileRelativePath = fileAbsPath.substring(len-1);
-				System.out.println("You chose to open this file: " +
-					fileAbsPath + " " + fileRelativePath);
-
-				maze.initFromTextFile(fileRelativePath);
-				if(maze.getWidth() > 0 && maze.getHeight() > 0) {
-					initMazeUI();
-				}
-
-			}
-		});
 		this.setVisible(true);
 
 		initMazeUI();
 	}
-	
+
+	/**
+	 * Given a maze, initialize the vue grid and packs the window
+	 */
 	public void initMazeUI() {
+		mazeWidth = maze.getWidth();
+		mazeHeight = maze.getHeight();
+
 		mazePanel.initMazeUI(maze);
+
 		this.pack();
 	}
-	
+
+	/**
+	 * Loads the maze from a given file
+	 * @param filePath the relative path to the maze file
+	 */
+	public void loadMaze(String filePath) {
+		maze.initFromTextFile(filePath);
+	}
+
+	public void initEmptyMaze(int width, int height) {
+		maze.initEmpty(width, height);
+	}
+
+	/**
+	 * Saves the current maze state to the given file
+	 * @param filePath the relative path to the file to save the maze to
+	 */
+	public void saveMaze(String filePath) {
+		maze.saveToTextFile(filePath);
+	}
+
+	/**
+	 * Given a set of vertex, highlights their position in the maze
+	 * @param path the list of vertex to highlight in the vue
+	 */
 	public void displayPath(ArrayList<VertexInterface> path) {
 		for(int i = 0; i < path.size(); i++) {
 			mazePanel.setCellColor(path.get(i).getX(), path.get(i).getY(), Color.GREEN);
 		}
 	}
 
+	public void setEditionState(int vueState) {
+		this.editionState = vueState;
+	}
+
+	public int getEditionState() {
+		return editionState;
+	}
+
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		if(e.getSource() == mazePanel) displayPath(maze.solve());
+		if(e.getSource() == maze) {
+			if(maze.getWidth() != mazeWidth || maze.getHeight() != mazeHeight) {
+				// si le labyrinthe a changé de dimensions
+				if(maze.getWidth() > 0 && maze.getHeight() > 0) {
+					initMazeUI();
+				}
+			}
+			mazePanel.updateGridColors();
+			displayPath(maze.getShortestPath());
+		}
 	}
 }

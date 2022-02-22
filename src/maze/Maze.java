@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import dijkstra.Dijkstra;
 
@@ -21,12 +20,10 @@ public class Maze implements GraphInterface {
 
 	private ArrayList<VertexInterface[]> vertexMatrix;
 	
-	private Hashtable<VertexInterface, ArrayList<VertexInterface>> graph2;
-	
 	private VertexInterface startPoint = null;
 	private VertexInterface endPoint = null;
 
-	private ArrayList<ChangeListener> listeners = new ArrayList<>();
+	private final ArrayList<ChangeListener> listeners = new ArrayList<>();
 	
 	private int width = 0;
 	private int height = 0;
@@ -57,7 +54,7 @@ public class Maze implements GraphInterface {
 				vertexMatrix.get(x)[y] = new EBox(x, y);
 			}
 		}
-		initGraph();
+		stateChanges();
 	}
 
 	/**
@@ -69,7 +66,6 @@ public class Maze implements GraphInterface {
 		BufferedReader br = null;
 		
 		try {
-			 // https://www.javatpoint.com/java-bufferedreader-class
 			 fr = new FileReader(filePath);
 	         br = new BufferedReader(fr);
 
@@ -95,19 +91,21 @@ public class Maze implements GraphInterface {
 					 char label = line.charAt(j);
 					 VertexInterface box = MBox.CreateFromLabel(label, i, j);
 
-					 if(label == 'A' && endPoint == null) endPoint = box;
-					 else if(label == 'A') throw new MazeMultipleEndPointException();
+					 if(label == Labels.ARRIVAL && endPoint == null) endPoint = box;
+					 else if(label == Labels.ARRIVAL) throw new MazeMultipleEndPointException();
 
-					 if(label == 'D' && startPoint == null) startPoint = box;
-					 else if(label == 'D') throw new MazeMultipleStartPointException();
+					 if(label == Labels.DEPARTURE && startPoint == null) startPoint = box;
+					 else if(label == Labels.DEPARTURE) throw new MazeMultipleStartPointException();
 
 					 vertexMatrix.get(i)[j] = box;
 	            }
 	            i++;
 	         }
 			 if(i==0) throw new MazeNoLinesException(filePath);
-			 // une fois la matrice du labyrinthe créée, on en déduit le graphe d'adjacence
-			 initGraph();
+
+			 // une fois la matrice du labyrinthe créée, on set la width et la height en attributs
+			width = vertexMatrix.size();
+			height = vertexMatrix.get(0).length;
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -118,50 +116,7 @@ public class Maze implements GraphInterface {
 				e.printStackTrace();
 			}    
 		}
-	}
-
-	/**
-	 * Initializes graph representation from matrix representation
-	 */
-	private void initGraph() {
-		width = vertexMatrix.size();
-		height = vertexMatrix.get(0).length;
-
-		graph2 = new Hashtable<>();
-         
-        // Initialisation du graph
-		for(int x = 0; x < width; x++) {
-        	 for(int y = 0; y < height; y++) {
-
-        		 VertexInterface vertex = getCell(x,y);
-        		 
-        		 if(vertex.getLabel() == 'W') continue; // un mur n'a pas de voisins, on saute les checks
-
-				 ArrayList<VertexInterface> neighborList = new ArrayList<>();
-
-        		 if(x > 0 && vertexMatrix.get(x-1)[y].getLabel() != 'W') {
-        			 // voisin de gauche accessible
-					 neighborList.add(vertexMatrix.get(x-1)[y]);
-        		 }
-        		 
-        		 if(x < width - 1 && vertexMatrix.get(x+1)[y].getLabel() != 'W') {
-        			// voisin de droite accessible
-					neighborList.add(vertexMatrix.get(x+1)[y]);
-        		 }
-        		 
-        		 if(y > 0 && vertexMatrix.get(x)[y-1].getLabel() != 'W') {
-        			 // voisin du bas accessible
-					 neighborList.add(vertexMatrix.get(x)[y-1]);
-        		 }
-        		 
-        		 if(y < height - 1 && vertexMatrix.get(x)[y+1].getLabel() != 'W') {
-        			// voisin du haut accessible
-					 neighborList.add(vertexMatrix.get(x)[y+1]);
-        		 }
-
-				 graph2.put(vertex, neighborList);
-        	 }
-         }
+		stateChanges();
 	}
 
 	/**
@@ -190,12 +145,11 @@ public class Maze implements GraphInterface {
 	 * @return the vertex at coordinates (x,y)
 	 */
 	public VertexInterface getCell(int x, int y) {
-		// TODO: catch out of bounds exception
+		//TODO: exceptions
+		// Clamping x and y to usable range
+		x = Math.max(0, Math.min(x, width - 1));
+		y = Math.max(0, Math.min(y, height - 1));
 		return vertexMatrix.get(x)[y];
-	}
-
-	public char getLabelFromCoords(int x, int y) {
-		return getCell(x, y).getLabel();
 	}
 
 	/**
@@ -204,7 +158,33 @@ public class Maze implements GraphInterface {
 	 * @return the list of its neighbors
 	 */
 	public ArrayList<VertexInterface> getNeighbors(VertexInterface vertex) {
-		return graph2.get(vertex);
+		int x = vertex.getX();
+		int y = vertex.getY();
+
+		ArrayList<VertexInterface> neighborList = new ArrayList<>();
+
+		if(vertex.getLabel() == Labels.WALL) return neighborList;
+
+		if(x > 0 && vertexMatrix.get(x-1)[y].getLabel() != Labels.WALL) {
+			// voisin de gauche accessible
+			neighborList.add(vertexMatrix.get(x-1)[y]);
+		}
+
+		if(x < width - 1 && vertexMatrix.get(x+1)[y].getLabel() != Labels.WALL) {
+			// voisin de droite accessible
+			neighborList.add(vertexMatrix.get(x+1)[y]);
+		}
+
+		if(y > 0 && vertexMatrix.get(x)[y-1].getLabel() != Labels.WALL) {
+			// voisin du bas accessible
+			neighborList.add(vertexMatrix.get(x)[y-1]);
+		}
+
+		if(y < height - 1 && vertexMatrix.get(x)[y+1].getLabel() != Labels.WALL) {
+			// voisin du haut accessible
+			neighborList.add(vertexMatrix.get(x)[y+1]);
+		}
+		return neighborList;
 	}
 
 	/**
@@ -215,7 +195,7 @@ public class Maze implements GraphInterface {
 	 */
 	public void setCell(int x, int y, VertexInterface vertex) {
 		vertexMatrix.get(x)[y] = vertex;
-		initGraph();
+		stateChanges();
 	}
 
 	/**
@@ -225,12 +205,14 @@ public class Maze implements GraphInterface {
 	 */
 	public void setStartPoint(int x, int y) {
 		if(startPoint != null) {
+			// si le start point existe déjà, on le remplace par une case vide
 			setCell(startPoint.getX(), startPoint.getY(), new EBox(startPoint.getX(), startPoint.getY()));
 		}
-		startPoint = new DBox(x, y);
+		// si on place le start point sur le end point, on supprime le end point
 		if(endPoint != null && x == endPoint.getX() && y == endPoint.getY()) endPoint = null;
+
+		startPoint = new DBox(x, y);
 		setCell(x, y, startPoint);
-		initGraph();
 	}
 
 	/**
@@ -250,10 +232,10 @@ public class Maze implements GraphInterface {
 		if(endPoint != null) {
 			setCell(endPoint.getX(), endPoint.getY(), new EBox(endPoint.getX(), endPoint.getY()));
 		}
-		endPoint = new ABox(x, y);
 		if(startPoint != null && x == startPoint.getX() && y == startPoint.getY()) startPoint = null;
+
+		endPoint = new ABox(x, y);
 		setCell(x, y, endPoint);
-		initGraph();
 	}
 
 	/**
@@ -284,27 +266,27 @@ public class Maze implements GraphInterface {
 	 * Returns the shortest path between the departure point and the arrival point in the maze
 	 * @return the shortest path between the departure point and the arrival point in the maze
 	 */
-	public ArrayList<VertexInterface> solve() {
+	public ArrayList<VertexInterface> getShortestPath() {
+		ArrayList<VertexInterface> path = new ArrayList<>();
+
 		try {
 			if (endPoint == null) throw new MazeEndPointException();
 			if (startPoint == null) throw new MazeStartPointException();
-			// TODO: la mettre ailleurs car je respecte pas MVC
+
 			PreviousInterface previous = Dijkstra.compute(this);
 
-			ArrayList<VertexInterface> path = new ArrayList<>();
-
 			// détermination du plus court chemin trouvé
-			VertexInterface currentCell = this.getEndPoint(); // on part de l'arrivée pour revenir au début
+			VertexInterface currentVertex = this.getEndPoint(); // on part de l'arrivée pour revenir au début
 			System.out.println("Shortest path : ");
-			System.out.print(currentCell);
+			System.out.print(currentVertex);
 			while (true) {
-				VertexInterface nextCell = previous.get(currentCell);
-				System.out.print(" - " + nextCell);
+				VertexInterface nextVertex = previous.get(currentVertex);
+				System.out.print(" - " + nextVertex);
 
 				// si on est revenu au début, on a fini de remonter le chemin
-				if (nextCell == this.getStartPoint()) break;
+				if (nextVertex == this.getStartPoint()) break;
 
-				if (nextCell == null) {
+				if (nextVertex == null) {
 					// si le chemin s'arrête brusquement
 					// TODO: en faire une exception ?
 					System.out.println();
@@ -312,17 +294,15 @@ public class Maze implements GraphInterface {
 					break;
 				}
 
-				path.add(nextCell);
+				path.add(nextVertex);
 
-				currentCell = nextCell;
+				currentVertex = nextVertex;
 			}
 			System.out.println();
-
-			return path;
 		} catch(MazeStartPointException | MazeEndPointException e) {
 			e.printStackTrace();
 		}
-		return new ArrayList<>();
+		return path;
 	}
 
 	public void addListener(ChangeListener listener) {

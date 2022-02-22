@@ -29,13 +29,13 @@ public abstract class MBox implements VertexInterface {
 
 	public static VertexInterface CreateFromLabel(char label, int x, int y) throws BoxLabelException {
 		switch(label) {
-			case 'A':
+			case Labels.ARRIVAL:
 				return new ABox(x, y);
-			case 'W':
+			case Labels.WALL:
 				return new WBox(x, y);
-			case 'D':
+			case Labels.DEPARTURE:
 				return new DBox(x, y);
-			case 'E':
+			case Labels.EMPTY:
 				return new EBox(x, y);
 			default:
 				throw new BoxLabelException(label, x, y);

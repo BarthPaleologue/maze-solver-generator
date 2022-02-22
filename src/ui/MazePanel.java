@@ -6,12 +6,9 @@ import maze.Maze;
 import maze.WBox;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 
 public class MazePanel extends JPanel implements MouseListener {
     private int nbCellsX;
@@ -19,14 +16,11 @@ public class MazePanel extends JPanel implements MouseListener {
 
     private GraphInterface maze = null;
 
-    private boolean departureMode = false;
-    private boolean arrivalMode = false;
-
     private CellPanel[][] UIGrid = null;
 
-    private ArrayList<ChangeListener> listeners;
+    private final Window parentWindow;
 
-    public MazePanel(int nbCellsX, int nbCellsY) {
+    public MazePanel(int nbCellsX, int nbCellsY, Window parentWindow) {
         super();
 
         this.nbCellsX = nbCellsX;
@@ -34,14 +28,16 @@ public class MazePanel extends JPanel implements MouseListener {
 
         addMouseListener(this);
 
-        listeners = new ArrayList<>();
+        this.parentWindow = parentWindow;
     }
 
     public void initMazeUI(Maze maze) {
         removeAll(); // remove components of last maze (necessary when changing maze size)
-        setLayout(new GridLayout(maze.getWidth(), maze.getHeight()));
+
         nbCellsX = maze.getWidth();
         nbCellsY = maze.getHeight();
+        setLayout(new GridLayout(nbCellsX, nbCellsY));
+
 
         this.maze = maze;
 
@@ -49,48 +45,21 @@ public class MazePanel extends JPanel implements MouseListener {
 
         for(int i = 0; i < nbCellsX; i++) {
             for(int j = 0; j < nbCellsY; j++) {
-                CellPanel cell = new CellPanel(i, j);
-                cell.setBackground(CellPanel.getColorFromLabel(maze.getLabelFromCoords(i, j)));
-                add(cell);
-
+                CellPanel cell = new CellPanel();
+                this.add(cell);
                 UIGrid[i][j] = cell;
             }
         }
-        stateChanges();
     }
 
-    public void setDepartureMode(boolean flag) {
-        if(flag && arrivalMode) arrivalMode = false;
-        departureMode = flag;
-    }
-    public void setArrivalMode(boolean flag) {
-        if(flag && departureMode) departureMode = false;
-        arrivalMode = flag;
-    }
-
+    /**
+     * Set the cell at the given coordinates to the corresponding color
+     * @param x the first coordinate of the cell
+     * @param y the second coordinate of the cell
+     * @param color The color to assign to the cell
+     */
     public void setCellColor(int x, int y, Color color) {
         UIGrid[x][y].setBackground(color);
-    }
-
-    public void reset() {
-        for(int i = 0; i < nbCellsX; i++) {
-            for(int j = 0; j < nbCellsY; j++) {
-                Color originalColor = CellPanel.getColorFromLabel(maze.getCell(i, j).getLabel());
-                UIGrid[i][j].setBackground(originalColor);
-            }
-        }
-        stateChanges();
-    }
-
-    public void addChangeListener(ChangeListener listener) {
-        listeners.add(listener);
-    }
-
-    public void stateChanges() {
-        ChangeEvent e = new ChangeEvent(this);
-        for(ChangeListener listener: listeners) {
-            listener.stateChanged(e);
-        }
     }
 
     @Override
@@ -102,17 +71,22 @@ public class MazePanel extends JPanel implements MouseListener {
         int cellX = e.getY() * nbCellsX / getHeight();
         int cellY = e.getX() * nbCellsY / getWidth();
 
-        //// 1 = LC ; 2 = MC ; 3 = RC
+        //// 1 = Left Click ; 2 = Middle Click ; 3 = Right Click
         switch(e.getButton()) {
             case 1:
-                if(departureMode) {
-                    maze.setStartPoint(cellX, cellY);
-                    departureMode = false;
-                } else if(arrivalMode) {
-                    maze.setEndPoint(cellX, cellY);
-                    arrivalMode = false;
-                } else {
-                    maze.setCell(cellX, cellY, new WBox(cellX, cellY));
+                switch (parentWindow.getEditionState()) {
+                    case EditionState.DEPARTURE:
+                        maze.setStartPoint(cellX, cellY);
+                        parentWindow.setEditionState(EditionState.WALL);
+                        break;
+                    case EditionState.ARRIVAL:
+                        maze.setEndPoint(cellX, cellY);
+                        parentWindow.setEditionState(EditionState.WALL);
+                        break;
+                    case EditionState.WALL:
+                        if(maze.getCell(cellX, cellY) != maze.getStartPoint() && maze.getCell(cellX, cellY) != maze.getEndPoint())
+                            maze.setCell(cellX, cellY, new WBox(cellX, cellY));
+                        break;
                 }
                 break;
             case 2:
@@ -121,10 +95,7 @@ public class MazePanel extends JPanel implements MouseListener {
                 if(maze.getCell(cellX, cellY) != maze.getStartPoint() && maze.getCell(cellX, cellY) != maze.getEndPoint())
                     maze.setCell(cellX, cellY, new EBox(cellX, cellY));
                 break;
-            default:
         }
-        reset();
-        stateChanges();
     }
 
     @Override
@@ -140,5 +111,14 @@ public class MazePanel extends JPanel implements MouseListener {
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
 
+    }
+
+    public void updateGridColors() {
+        for(int i = 0; i < nbCellsX; i++) {
+            for(int j = 0; j < nbCellsY; j++) {
+                Color originalColor = CellPanel.getColorFromLabel(maze.getCell(i, j).getLabel());
+                setCellColor(i, j, originalColor);
+            }
+        }
     }
 }

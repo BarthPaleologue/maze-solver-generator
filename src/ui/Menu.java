@@ -1,27 +1,30 @@
 package ui;
 
-import maze.GraphInterface;
-
 import javax.swing.*;
 import java.io.File;
 
 public class Menu extends JMenuBar {
-    public Menu(GraphInterface maze) {
-        /*JMenu fileMenu = new JMenu("Maze File");
+
+    public Menu(Window parentWindow) {
+
+        JMenu fileMenu = new JMenu("Maze File");
         JButton departureButton = new JButton("Set departure");
         JButton arrivalButton = new JButton("Set Arrival");
-        add(fileMenu);
-        add(departureButton);
-        add(arrivalButton);
+        this.add(fileMenu);
+        this.add(departureButton);
+        this.add(arrivalButton);
 
-        JMenuItem newEmptyItem = new JMenuItem("New empty maze");
-        JMenuItem openFileItem = new JMenuItem("Open maze file");
-        JMenuItem saveFileItem = new JMenuItem("Save maze to file");
-        fileMenu.add(newEmptyItem);
-        fileMenu.add(openFileItem);
-        fileMenu.add(saveFileItem);
+        JMenuItem newEmptyMazeItem = new JMenuItem("New empty maze");
+        JMenuItem openMazeFileItem = new JMenuItem("Open maze file");
+        JMenuItem saveMazeFileItem = new JMenuItem("Save maze to file");
 
-        newEmptyItem.addActionListener(e -> {
+        fileMenu.add(newEmptyMazeItem);
+        fileMenu.add(openMazeFileItem);
+        fileMenu.add(saveMazeFileItem);
+
+        //TODO: exception pour les valeurs négatives
+
+        newEmptyMazeItem.addActionListener(e -> {
             int newWidth = Integer.parseInt((String)JOptionPane.showInputDialog(
                     this,
                     "Maze Width :",
@@ -30,6 +33,7 @@ public class Menu extends JMenuBar {
                     null,
                     null,
                     "10"));
+            newWidth = Math.max(1, newWidth);
 
             int newHeight = Integer.parseInt((String) JOptionPane.showInputDialog(
                     this,
@@ -39,30 +43,31 @@ public class Menu extends JMenuBar {
                     null,
                     null,
                     "10"));
-            maze.initEmpty(newWidth, newHeight);
-            initMazeUI();
+            newHeight = Math.max(1, newHeight);
+
+            //TODO: j'ai inversé aled
+            parentWindow.initEmptyMaze(newHeight, newWidth);
         });
 
-        departureButton.addActionListener(e -> mazePanel.setDepartureMode(true));
+        departureButton.addActionListener(e -> parentWindow.setEditionState(EditionState.DEPARTURE));
+        arrivalButton.addActionListener(e -> parentWindow.setEditionState(EditionState.ARRIVAL));
 
-        arrivalButton.addActionListener(e -> mazePanel.setArrivalMode(true));
-
-        saveFileItem.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser("./data");
+        saveMazeFileItem.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser(Path.MAZE_DIR);
             int returnVal = chooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
+                // calcul du chemin relatif à l'aide de soustractions de chaines de caractères
                 String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
                 String dirAbsPath = new File(".").getAbsolutePath();
-                int len = dirAbsPath.length();
-                String fileRelativePath = fileAbsPath.substring(len - 1);
+                String fileRelativePath = fileAbsPath.substring(dirAbsPath.length() - 1);
                 System.out.println("You chose to save to this file: " + fileAbsPath + " " + fileRelativePath);
 
-                maze.saveToTextFile(fileRelativePath);
+                parentWindow.saveMaze(fileRelativePath);
             }
         });
 
-        openFileItem.addActionListener(e -> {
-            JFileChooser chooser = new JFileChooser("./data");
+        openMazeFileItem.addActionListener(e -> {
+            JFileChooser chooser = new JFileChooser(Path.MAZE_DIR);
             int returnVal = chooser.showOpenDialog(this);
             if(returnVal == JFileChooser.APPROVE_OPTION) {
                 String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
@@ -72,12 +77,8 @@ public class Menu extends JMenuBar {
                 System.out.println("You chose to open this file: " +
                         fileAbsPath + " " + fileRelativePath);
 
-                maze.initFromTextFile(fileRelativePath);
-                if(maze.getWidth() > 0 && maze.getHeight() > 0) {
-                    initMazeUI();
-                }
-
+                parentWindow.loadMaze(fileRelativePath);
             }
-        });*/
+        });
     }
 }

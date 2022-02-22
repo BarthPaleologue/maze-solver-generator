@@ -37,14 +37,30 @@ Le calcul du chemin le plus court est automatique du moment qu'il existe un poin
 
 Si il n'y a pas de chemin vert affiché, c'est qu'il manque un point de départ ou un point d'arrivé ou alors qu'il n'y a pas de chemin possible entre le point de départ et le point d'arrivée.
 
-## Implémentation MVC
+## Charger un fichier
 
-Le solveur a été conçu en suivant le pattern MVC représenté sur ce schéma :
+Le solveur peut lire des fichiers de la forme :
 
-![MVC](./data/imgs/MVC.jpg)
+```
+EDEEEEEEEE
+EWWWWWWEWW
+EWEEEEEEEE
+EWWWWEWWWW
+EWEEEEWEEE
+EWEEWWWEEE
+EWEEWEWEAE
+EWEWWEWEEE
+EWEEWEEEEE
+EEWEEEEEEE
+```
+C'est-à-dire qu'il ne contient que les labels du labyrinthe avec la correspondance suivante :
 
-Les packages Maze et Dijkstra forment le modèle.
+E : Case vide (Empty)
 
-Les classes Window, MenuBar et MazePanel forment le contrôleur
+D : Case de Départ
 
-La classe CellPanel est la vue.
+A : Case d'Arrivée
+
+W : Case de mur (Wall)
+
+Notez que cette nomenclature est modifiable à volonté dans le fichier ```./src/maze/Labels.java```
