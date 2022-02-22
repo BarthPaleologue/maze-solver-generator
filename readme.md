@@ -39,6 +39,12 @@ Si il n'y a pas de chemin vert affiché, c'est qu'il manque un point de départ 
 
 ## Charger un fichier
 
+Le projet vient livré avec de nombreux fichiers de labyrinthe se trouvant dans ```./data``` que vous pouvez facilement ouvrir à l'aide du menu ```Maze File```.
+
+Vous pouvez également charger les labyrinthes que vous avez créé avec l'interface graphique en utilisant la même procédure.
+
+Il est cependant possible de créer vos propres fichiers de labyrinthes sans passer par le mode édition de l'interface graphique, pour cela il faut respécter la norme suivante.
+
 Le solveur peut lire des fichiers de la forme :
 
 ```

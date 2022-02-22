@@ -5,11 +5,7 @@ import java.util.Hashtable;
 
 public class Previous implements PreviousInterface {
 	
-	private final Hashtable<VertexInterface, VertexInterface> htab;
-	
-	Previous() {
-		htab = new Hashtable<>();
-	}
+	private final Hashtable<VertexInterface, VertexInterface> htab = new Hashtable<>();
 
 	public VertexInterface get(VertexInterface vertex) {
 		return htab.get(vertex);
