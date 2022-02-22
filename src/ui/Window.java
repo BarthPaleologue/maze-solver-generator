@@ -9,10 +9,11 @@ import javax.swing.event.ChangeListener;
 
 import dijkstra.VertexInterface;
 import maze.Maze;
+import maze.MazeInterface;
 
 public class Window extends JFrame implements ChangeListener {
 	private final MazePanel mazePanel;
-	private final Maze maze;
+	private final MazeInterface maze;
 	public static final int DEFAULT_WIDTH = 600;
 	public static final int DEFAULT_HEIGHT = 670;
 
@@ -31,24 +32,26 @@ public class Window extends JFrame implements ChangeListener {
 		this.add(menuBar);
 		this.setJMenuBar(menuBar);
 
-		int width = Integer.parseInt((String)JOptionPane.showInputDialog(
+		String widthString = (String)JOptionPane.showInputDialog(
 				this,
 				"Maze Width :",
 				"Initialization Phase",
 				JOptionPane.PLAIN_MESSAGE,
 				null,
 				null,
-				"10"));
+				String.valueOf(Maze.DEFAULT_WIDTH));
+		int width = widthString != null ? Integer.parseInt(widthString) : Maze.DEFAULT_WIDTH;
 		width = Math.max(1, width);
 
-		int height = Integer.parseInt((String) JOptionPane.showInputDialog(
+		String heightString = (String) JOptionPane.showInputDialog(
 				this,
 				"Maze Height :",
 				"Initialization Phase",
 				JOptionPane.PLAIN_MESSAGE,
 				null,
 				null,
-				"10"));
+				String.valueOf(Maze.DEFAULT_HEIGHT));
+		int height = heightString != null ? Integer.parseInt(heightString) : Maze.DEFAULT_HEIGHT;
 		height = Math.max(1, height);
 
 		//TODO: j'ai inversé aled

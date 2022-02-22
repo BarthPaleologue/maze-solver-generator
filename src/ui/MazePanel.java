@@ -1,9 +1,6 @@
 package ui;
 
-import maze.EBox;
-import maze.GraphInterface;
-import maze.Maze;
-import maze.WBox;
+import maze.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +11,7 @@ public class MazePanel extends JPanel implements MouseListener {
     private int nbCellsX;
     private int nbCellsY;
 
-    private GraphInterface maze = null;
+    private MazeInterface maze = null;
 
     private CellPanel[][] UIGrid = null;
 
@@ -31,7 +28,7 @@ public class MazePanel extends JPanel implements MouseListener {
         this.parentWindow = parentWindow;
     }
 
-    public void initMazeUI(Maze maze) {
+    public void initMazeUI(MazeInterface maze) {
         removeAll(); // remove components of last maze (necessary when changing maze size)
 
         nbCellsX = maze.getWidth();

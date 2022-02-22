@@ -16,9 +16,12 @@ import maze.exceptions.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Maze implements GraphInterface {
+public class Maze implements GraphInterface, MazeInterface {
 
 	private ArrayList<VertexInterface[]> vertexMatrix;
+
+	public static final int DEFAULT_WIDTH = 10;
+	public static final int DEFAULT_HEIGHT = 10;
 	
 	private VertexInterface startPoint = null;
 	private VertexInterface endPoint = null;
