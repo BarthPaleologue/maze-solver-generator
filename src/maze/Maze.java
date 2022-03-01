@@ -51,10 +51,10 @@ public class Maze implements GraphInterface, MazeInterface {
 		this.startPoint = null;
 		this.endPoint = null;
 		vertexMatrix = new ArrayList<>();
-		for(int x = 0; x < width; x++) {
-			vertexMatrix.add(new VertexInterface[height]);
-			for(int y = 0; y < height; y++) {
-				vertexMatrix.get(x)[y] = new EBox(x, y);
+		for(int y = 0; y < height; y++) {
+			vertexMatrix.add(new VertexInterface[width]);
+			for(int x = 0; x < width; x++) {
+				vertexMatrix.get(y)[x] = new EBox(x, y);
 			}
 		}
 		stateChanges();
@@ -78,7 +78,7 @@ public class Maze implements GraphInterface, MazeInterface {
 			// initialisation de la matrice des vertices
 			 ArrayList<VertexInterface[]> newVertexMatrix = new ArrayList<>();
 	         
-	         int i = 0; // compteur de lignes
+	         int y = 0; // compteur de lignes
 			 int lineLength = -1;
 	         for(String line = br.readLine(); line != null; line = br.readLine()) {
 				 if(lineLength != -1 && line.length() != lineLength) throw new MazeRectangleException();
@@ -87,9 +87,9 @@ public class Maze implements GraphInterface, MazeInterface {
 				 // on ajoute une nouvelle ligne à la matrice
 				 newVertexMatrix.add(new VertexInterface[line.length()]);
 	            
-				 for(int j = 0; j < line.length(); j++) {
-					 char label = line.charAt(j);
-					 VertexInterface box = MBox.CreateFromLabel(label, i, j);
+				 for(int x = 0; x < line.length(); x++) {
+					 char label = line.charAt(x);
+					 VertexInterface box = MBox.CreateFromLabel(label, x, y);
 
 					 if(label == Labels.ARRIVAL) {
 						 if(newEndPoint == null) newEndPoint = box;
@@ -101,15 +101,15 @@ public class Maze implements GraphInterface, MazeInterface {
 						 else throw new MazeMultipleStartPointException();
 					 }
 
-					 newVertexMatrix.get(i)[j] = box;
+					 newVertexMatrix.get(y)[x] = box;
 	            }
-	            i++;
+	            y++;
 	         }
-			 if(i==0) throw new MazeNoLinesException(filePath);
+			 if(y == 0) throw new MazeNoLinesException(filePath);
 
 			 // une fois la matrice du labyrinthe créée, on set la width et la height en attributs
-			width = newVertexMatrix.size();
-			height = newVertexMatrix.get(0).length;
+			height = newVertexMatrix.size();
+			width = newVertexMatrix.get(0).length;
 			endPoint = newEndPoint;
 			startPoint = newStartPoint;
 			vertexMatrix = newVertexMatrix;
@@ -133,9 +133,9 @@ public class Maze implements GraphInterface, MazeInterface {
 	 */
 	public void saveToTextFile(String filePath) {
 		try (PrintWriter writer = new PrintWriter(filePath)) {
-			for (int x = 0; x < width; x++) {
-				for (int y = 0; y < height; y++) {
-					writer.append(vertexMatrix.get(x)[y].getLabel());
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					writer.append(getCell(x, y).getLabel());
 				}
 				writer.append('\n');
 			}
@@ -152,7 +152,7 @@ public class Maze implements GraphInterface, MazeInterface {
 	 * @return the vertex at coordinates (x,y)
 	 */
 	public VertexInterface getCell(int x, int y) {
-		return vertexMatrix.get(x)[y];
+		return vertexMatrix.get(y)[x];
 	}
 
 	/**
@@ -194,7 +194,7 @@ public class Maze implements GraphInterface, MazeInterface {
 	 * @param vertex the vertex to put at the given coordinates
 	 */
 	public void setCell(int x, int y, VertexInterface vertex) {
-		vertexMatrix.get(x)[y] = vertex;
+		vertexMatrix.get(y)[x] = vertex;
 		stateChanges();
 	}
 

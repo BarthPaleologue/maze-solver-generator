@@ -33,8 +33,7 @@ public class Menu extends JMenuBar {
             int newHeight = parentWindow.promptIntFromUser("New Maze","Enter new maze height : ", Maze.DEFAULT_HEIGHT);
             newHeight = Math.max(1, newHeight);
 
-            //TODO: j'ai inversé aled
-            parentWindow.initEmptyMaze(newHeight, newWidth);
+            parentWindow.initEmptyMaze(newWidth, newHeight);
         });
 
         departureButton.addActionListener(e -> parentWindow.setEditionState(EditionState.DEPARTURE));

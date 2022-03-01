@@ -57,8 +57,7 @@ public class Window extends JFrame implements ChangeListener {
 		int height = promptIntFromUser("New Maze", "Enter new maze height", Maze.DEFAULT_HEIGHT);
 		height = Math.max(1, height);
 
-		//TODO: j'ai inversé aled
-		MazeInterface maze = new Maze(height, width);
+		MazeInterface maze = new Maze(width, height);
 		maze.addListener(this);
 
 		mazeWidth = maze.getWidth();
@@ -77,7 +76,7 @@ public class Window extends JFrame implements ChangeListener {
 
 	private MazeVuePanel setupMazeVuePanel() {
 		MazeVuePanel mazeVuePanel = new MazeVuePanel(maze.getWidth(), maze.getHeight(), this);
-		mazeVuePanel.initMazeUI(mazeWidth, mazeHeight);
+		mazeVuePanel.initMazeUI(maze.getWidth(), maze.getHeight());
 		return mazeVuePanel;
 	}
 

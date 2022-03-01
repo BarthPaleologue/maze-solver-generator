@@ -29,15 +29,15 @@ public class MazeVuePanel extends JPanel {
 
         this.nbCellsX = nbCellsX;
         this.nbCellsY = nbCellsY;
-        setLayout(new GridLayout(nbCellsX, nbCellsY));
+        setLayout(new GridLayout(nbCellsY, nbCellsX));
 
         UIGrid = new CellPanel[nbCellsX][nbCellsY];
 
-        for(int i = 0; i < nbCellsX; i++) {
-            for(int j = 0; j < nbCellsY; j++) {
-                CellPanel cell = new CellPanel(i,j);
+        for(int y = 0; y < nbCellsY; y++) {
+            for(int x = 0; x < nbCellsX; x++) {
+                CellPanel cell = new CellPanel(x, y);
                 this.add(cell);
-                UIGrid[i][j] = cell;
+                UIGrid[x][y] = cell;
             }
         }
 
