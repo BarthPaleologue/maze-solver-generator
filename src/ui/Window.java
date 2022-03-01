@@ -8,11 +8,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import dijkstra.VertexInterface;
+import maze.Labels;
 import maze.Maze;
 import maze.MazeInterface;
 
 public class Window extends JFrame implements ChangeListener {
-	private final MazePanel mazePanel;
+	private final ControlPanel mazeControlPanel;
+	private final MazeVuePanel mazeVuePanel;
 	private final MazeInterface maze;
 	public static final int DEFAULT_WIDTH = 600;
 	public static final int DEFAULT_HEIGHT = 670;
@@ -28,55 +30,55 @@ public class Window extends JFrame implements ChangeListener {
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
+		setupMenuBar();
+		maze = setupMaze();
+		this.mazeControlPanel = setupControlPanel();
+		this.mazeVuePanel = setupMazeVuePanel();
+
+		this.mazeControlPanel.add(mazeVuePanel, BorderLayout.CENTER);
+
+		this.pack();
+
+		this.setVisible(true);
+	}
+
+	private JMenuBar setupMenuBar() {
 		JMenuBar menuBar = new Menu(this);
 		this.add(menuBar);
 		this.setJMenuBar(menuBar);
 
-		String widthString = (String)JOptionPane.showInputDialog(
-				this,
-				"Maze Width :",
-				"Initialization Phase",
-				JOptionPane.PLAIN_MESSAGE,
-				null,
-				null,
-				String.valueOf(Maze.DEFAULT_WIDTH));
-		int width = widthString != null ? Integer.parseInt(widthString) : Maze.DEFAULT_WIDTH;
+		return menuBar;
+	}
+
+	private MazeInterface setupMaze() {
+		int width = promptIntFromUser("New Maze","Enter new maze width", Maze.DEFAULT_WIDTH);
 		width = Math.max(1, width);
 
-		String heightString = (String) JOptionPane.showInputDialog(
-				this,
-				"Maze Height :",
-				"Initialization Phase",
-				JOptionPane.PLAIN_MESSAGE,
-				null,
-				null,
-				String.valueOf(Maze.DEFAULT_HEIGHT));
-		int height = heightString != null ? Integer.parseInt(heightString) : Maze.DEFAULT_HEIGHT;
+		int height = promptIntFromUser("New Maze", "Enter new maze height", Maze.DEFAULT_HEIGHT);
 		height = Math.max(1, height);
 
 		//TODO: j'ai inversé aled
-		maze = new Maze(height, width);
+		MazeInterface maze = new Maze(height, width);
 		maze.addListener(this);
 
-		mazePanel = new MazePanel(maze.getWidth(), maze.getHeight(), this);
-
-		this.add(mazePanel);
-
-		this.setVisible(true);
-
-		initMazeUI();
-	}
-
-	/**
-	 * Given a maze, initialize the vue grid and packs the window
-	 */
-	public void initMazeUI() {
 		mazeWidth = maze.getWidth();
 		mazeHeight = maze.getHeight();
 
-		mazePanel.initMazeUI(maze);
+		return maze;
+	}
 
-		this.pack();
+	private ControlPanel setupControlPanel() {
+		ControlPanel mazeControlPanel = new ControlPanel(this);
+		mazeControlPanel.setLayout(new BorderLayout());
+		this.add(mazeControlPanel);
+
+		return mazeControlPanel;
+	}
+
+	private MazeVuePanel setupMazeVuePanel() {
+		MazeVuePanel mazeVuePanel = new MazeVuePanel(maze.getWidth(), maze.getHeight(), this);
+		mazeVuePanel.initMazeUI(mazeWidth, mazeHeight);
+		return mazeVuePanel;
 	}
 
 	/**
@@ -105,7 +107,7 @@ public class Window extends JFrame implements ChangeListener {
 	 */
 	public void displayPath(ArrayList<VertexInterface> path) {
 		for(int i = 0; i < path.size(); i++) {
-			mazePanel.setCellColor(path.get(i).getX(), path.get(i).getY(), Color.GREEN);
+			mazeVuePanel.setCellColor(path.get(i).getX(), path.get(i).getY(), Color.GREEN);
 		}
 	}
 
@@ -123,11 +125,34 @@ public class Window extends JFrame implements ChangeListener {
 			if(maze.getWidth() != mazeWidth || maze.getHeight() != mazeHeight) {
 				// si le labyrinthe a changé de dimensions
 				if(maze.getWidth() > 0 && maze.getHeight() > 0) {
-					initMazeUI();
+					mazeWidth = maze.getWidth();
+					mazeHeight = maze.getHeight();
+					mazeVuePanel.initMazeUI(mazeWidth, mazeHeight);
+					this.pack();
 				}
 			}
-			mazePanel.updateGridColors();
+			mazeVuePanel.updateGridColors();
 			displayPath(maze.getShortestPath());
 		}
+	}
+
+	public MazeInterface getMaze() {
+		return maze;
+	}
+
+	public Color getColorFromCoords(int x, int y) {
+		return Labels.getColorFromLabel(maze.getCell(x, y).getLabel());
+	}
+
+	public int promptIntFromUser(String promptTitle, String promptText, int defaultValue) {
+		String resultString = (String) JOptionPane.showInputDialog(
+				this,
+				promptText,
+				promptTitle,
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				null,
+				String.valueOf(defaultValue));
+		return resultString != null ? Integer.parseInt(resultString) : defaultValue;
 	}
 }

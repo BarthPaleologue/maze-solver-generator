@@ -1,5 +1,7 @@
 package ui;
 
+import maze.Maze;
+
 import javax.swing.*;
 import java.io.File;
 
@@ -25,24 +27,10 @@ public class Menu extends JMenuBar {
         //TODO: exception pour les valeurs négatives
 
         newEmptyMazeItem.addActionListener(e -> {
-            int newWidth = Integer.parseInt((String)JOptionPane.showInputDialog(
-                    this,
-                    "Maze Width :",
-                    "Initialization Phase",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    null,
-                    "10"));
+            int newWidth = parentWindow.promptIntFromUser("New Maze","Enter new maze width :", Maze.DEFAULT_WIDTH);
             newWidth = Math.max(1, newWidth);
 
-            int newHeight = Integer.parseInt((String) JOptionPane.showInputDialog(
-                    this,
-                    "Maze Height :",
-                    "Initialization Phase",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    null,
-                    "10"));
+            int newHeight = parentWindow.promptIntFromUser("New Maze","Enter new maze height : ", Maze.DEFAULT_HEIGHT);
             newHeight = Math.max(1, newHeight);
 
             //TODO: j'ai inversé aled
@@ -54,6 +42,7 @@ public class Menu extends JMenuBar {
 
         saveMazeFileItem.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser(Path.MAZE_DIR);
+            chooser.setSelectedFile(new File(Path.DEFAULT_FILENAME));
             int returnVal = chooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 // calcul du chemin relatif à l'aide de soustractions de chaines de caractères
@@ -72,8 +61,8 @@ public class Menu extends JMenuBar {
             if(returnVal == JFileChooser.APPROVE_OPTION) {
                 String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
                 String dirAbsPath = new File(".").getAbsolutePath();
-                int len = dirAbsPath.length();
-                String fileRelativePath = fileAbsPath.substring(len-1);
+                String fileRelativePath = fileAbsPath.substring(dirAbsPath.length() - 1);
+                if(fileRelativePath.equals("data/ussr.txt")) System.out.println("WELCOME COMRADE");
                 System.out.println("You chose to open this file: " +
                         fileAbsPath + " " + fileRelativePath);
 

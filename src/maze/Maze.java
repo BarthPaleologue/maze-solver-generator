@@ -72,14 +72,11 @@ public class Maze implements GraphInterface, MazeInterface {
 			 fr = new FileReader(filePath);
 	         br = new BufferedReader(fr);
 
-			// reset des width et height pour éviter les effets de bord en cas d'Exception
-			startPoint = null;
-			endPoint = null;
-			width = 0;
-			height = 0;
+			 VertexInterface newStartPoint  = null;
+			 VertexInterface newEndPoint = null;
 
 			// initialisation de la matrice des vertices
-			 vertexMatrix = new ArrayList<>();
+			 ArrayList<VertexInterface[]> newVertexMatrix = new ArrayList<>();
 	         
 	         int i = 0; // compteur de lignes
 			 int lineLength = -1;
@@ -88,27 +85,36 @@ public class Maze implements GraphInterface, MazeInterface {
 				 lineLength = line.length();
 
 				 // on ajoute une nouvelle ligne à la matrice
-				 vertexMatrix.add(new VertexInterface[line.length()]);
+				 newVertexMatrix.add(new VertexInterface[line.length()]);
 	            
 				 for(int j = 0; j < line.length(); j++) {
 					 char label = line.charAt(j);
 					 VertexInterface box = MBox.CreateFromLabel(label, i, j);
 
-					 if(label == Labels.ARRIVAL && endPoint == null) endPoint = box;
-					 else if(label == Labels.ARRIVAL) throw new MazeMultipleEndPointException();
+					 if(label == Labels.ARRIVAL) {
+						 if(newEndPoint == null) newEndPoint = box;
+						 else throw new MazeMultipleEndPointException();
+					 }
 
-					 if(label == Labels.DEPARTURE && startPoint == null) startPoint = box;
-					 else if(label == Labels.DEPARTURE) throw new MazeMultipleStartPointException();
+					 if(label == Labels.DEPARTURE) {
+						 if(newStartPoint == null) newStartPoint = box;
+						 else throw new MazeMultipleStartPointException();
+					 }
 
-					 vertexMatrix.get(i)[j] = box;
+					 newVertexMatrix.get(i)[j] = box;
 	            }
 	            i++;
 	         }
 			 if(i==0) throw new MazeNoLinesException(filePath);
 
 			 // une fois la matrice du labyrinthe créée, on set la width et la height en attributs
-			width = vertexMatrix.size();
-			height = vertexMatrix.get(0).length;
+			width = newVertexMatrix.size();
+			height = newVertexMatrix.get(0).length;
+			endPoint = newEndPoint;
+			startPoint = newStartPoint;
+			vertexMatrix = newVertexMatrix;
+
+			stateChanges();
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -119,7 +125,6 @@ public class Maze implements GraphInterface, MazeInterface {
 				e.printStackTrace();
 			}    
 		}
-		stateChanges();
 	}
 
 	/**
@@ -127,7 +132,6 @@ public class Maze implements GraphInterface, MazeInterface {
 	 * @param filePath the path to the file you want to save to
 	 */
 	public void saveToTextFile(String filePath) {
-		// shorter syntax that closes the writer automatically
 		try (PrintWriter writer = new PrintWriter(filePath)) {
 			for (int x = 0; x < width; x++) {
 				for (int y = 0; y < height; y++) {
@@ -148,11 +152,18 @@ public class Maze implements GraphInterface, MazeInterface {
 	 * @return the vertex at coordinates (x,y)
 	 */
 	public VertexInterface getCell(int x, int y) {
-		//TODO: exceptions
-		// Clamping x and y to usable range
-		x = Math.max(0, Math.min(x, width - 1));
-		y = Math.max(0, Math.min(y, height - 1));
 		return vertexMatrix.get(x)[y];
+	}
+
+	/**
+	 * Determines if the vertex at the given coordinates exists and is not a wall
+	 * @param x the x coordinate of the vertex to test
+	 * @param y the y coordinate of the vertex to test
+	 * @return if the vertex at (x,y) exists AND is not a wall
+	 */
+	private boolean existsAndNotWall(int x, int y) {
+		if(x < 0 || x >= width || y < 0 || y >= height) return false; // does not exist
+		return getCell(x, y).getLabel() != Labels.WALL; // is not a wall
 	}
 
 	/**
@@ -168,25 +179,11 @@ public class Maze implements GraphInterface, MazeInterface {
 
 		if(vertex.getLabel() == Labels.WALL) return neighborList;
 
-		if(x > 0 && vertexMatrix.get(x-1)[y].getLabel() != Labels.WALL) {
-			// voisin de gauche accessible
-			neighborList.add(vertexMatrix.get(x-1)[y]);
-		}
+		if(existsAndNotWall(x-1, y)) neighborList.add(getCell(x-1, y));
+		if(existsAndNotWall(x+1, y)) neighborList.add(getCell(x+1, y));
+		if(existsAndNotWall(x, y-1)) neighborList.add(getCell(x, y-1));
+		if(existsAndNotWall(x, y+1)) neighborList.add(getCell(x, y+1));
 
-		if(x < width - 1 && vertexMatrix.get(x+1)[y].getLabel() != Labels.WALL) {
-			// voisin de droite accessible
-			neighborList.add(vertexMatrix.get(x+1)[y]);
-		}
-
-		if(y > 0 && vertexMatrix.get(x)[y-1].getLabel() != Labels.WALL) {
-			// voisin du bas accessible
-			neighborList.add(vertexMatrix.get(x)[y-1]);
-		}
-
-		if(y < height - 1 && vertexMatrix.get(x)[y+1].getLabel() != Labels.WALL) {
-			// voisin du haut accessible
-			neighborList.add(vertexMatrix.get(x)[y+1]);
-		}
 		return neighborList;
 	}
 
@@ -212,7 +209,7 @@ public class Maze implements GraphInterface, MazeInterface {
 			setCell(startPoint.getX(), startPoint.getY(), new EBox(startPoint.getX(), startPoint.getY()));
 		}
 		// si on place le start point sur le end point, on supprime le end point
-		if(endPoint != null && x == endPoint.getX() && y == endPoint.getY()) endPoint = null;
+		if(doesOverlapEndPoint(x, y)) endPoint = null;
 
 		startPoint = new DBox(x, y);
 		setCell(x, y, startPoint);
@@ -233,9 +230,10 @@ public class Maze implements GraphInterface, MazeInterface {
 	 */
 	public void setEndPoint(int x, int y) {
 		if(endPoint != null) {
+			// on supprime l'ancien endPoint
 			setCell(endPoint.getX(), endPoint.getY(), new EBox(endPoint.getX(), endPoint.getY()));
 		}
-		if(startPoint != null && x == startPoint.getX() && y == startPoint.getY()) startPoint = null;
+		if(doesOverlapStartPoint(x, y)) startPoint = null;
 
 		endPoint = new ABox(x, y);
 		setCell(x, y, endPoint);
@@ -308,10 +306,57 @@ public class Maze implements GraphInterface, MazeInterface {
 		return path;
 	}
 
+	/**
+	 * Place wall cell at given coordinates (will remove startPoint & endPoint if overlap)
+	 * @param x the x coordinate at which you want to place a wall cell
+	 * @param y the y coordinate at which you want to place a wall cell
+	 */
+	public void placeWallAt(int x, int y) {
+		if(doesOverlapStartPoint(x, y)) startPoint = null;
+		if(doesOverlapEndPoint(x, y)) endPoint = null;
+		setCell(x, y, new WBox(x, y));
+	}
+
+	/**
+	 * Place empty cell at given coordinates (will remove startPoint & endPoint if overlap)
+	 * @param x the x coordinate at which you want to place an empty cell
+	 * @param y the y coordinate at which you want to place an empty cell
+	 */
+	public void placeEmptyAt(int x, int y) {
+		if(doesOverlapStartPoint(x, y)) startPoint = null;
+		if(doesOverlapEndPoint(x, y)) endPoint = null;
+		setCell(x, y, new EBox(x, y));
+	}
+
+	/**
+	 * Check if the given coordinates match those of the start point. Set the start point to null if true
+	 * @param x the x coordinate to check the overlap for
+	 * @param y the y coordinate to check the overlap for
+	 */
+	private boolean doesOverlapStartPoint(int x, int y) {
+		return startPoint != null && startPoint.getX() == x && startPoint.getY() == y;
+	}
+
+	/**
+	 * Check if the given coordinates match those of the end point. Set the end point to null if true
+	 * @param x the x coordinate to check the overlap for
+	 * @param y the y coordinate to check the overlap for
+	 */
+	private boolean doesOverlapEndPoint(int x, int y) {
+		return endPoint != null && endPoint.getX() == x && endPoint.getY() == y;
+	}
+
+	/**
+	 * Add change listener to the maze
+	 * @param listener the listener to add to the maze
+	 */
 	public void addListener(ChangeListener listener) {
 		listeners.add(listener);
 	}
 
+	/**
+	 * Notify listener a change of state in the maze
+	 */
 	private void stateChanges() {
 		ChangeEvent e = new ChangeEvent(this);
 		for(ChangeListener listener: listeners) {

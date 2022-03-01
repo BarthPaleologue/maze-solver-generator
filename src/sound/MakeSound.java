@@ -1,4 +1,6 @@
 package sound;
+import ui.Path;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -73,6 +75,6 @@ public class MakeSound {
     }
     
     public void OH() {
-    	this.playSound("data/oh.wav");
+    	this.playSound(Path.SOUND_DIR + "oh.wav");
     }
 }

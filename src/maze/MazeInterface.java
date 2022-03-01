@@ -25,5 +25,8 @@ public interface MazeInterface {
 
     ArrayList<VertexInterface> getShortestPath();
 
+    void placeWallAt(int x, int y);
+    void placeEmptyAt(int x, int y);
+
     void addListener(ChangeListener listener);
 }

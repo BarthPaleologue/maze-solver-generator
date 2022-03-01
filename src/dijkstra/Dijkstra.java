@@ -44,7 +44,7 @@ public class Dijkstra {
 					previous.set(neighbor, pivot);
 				} else if(pi.get(pivot) + 1 < pi.get(neighbor)) {
 					// si sommet déjà marqué
-					pi.set(neighbor, pi.get(neighbor)+1);
+					pi.set(neighbor, pi.get(neighbor) + 1);
 
 					previous.set(neighbor, pivot);
 				}
