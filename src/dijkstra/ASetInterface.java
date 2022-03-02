@@ -1,9 +1,11 @@
 package dijkstra;
 
+import java.util.Iterator;
+
 public interface ASetInterface {
-	void add(VertexInterface vertex);
+	boolean add(VertexInterface vertex);
 	boolean contains(VertexInterface vertex);
 	int length();
 	void remove(VertexInterface vertex);
-	VertexInterface get(int index);
+	Iterator<VertexInterface> getIterator();
 }

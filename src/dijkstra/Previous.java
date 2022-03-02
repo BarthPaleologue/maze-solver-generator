@@ -2,21 +2,14 @@ package dijkstra;
 
 import java.util.Hashtable;
 
-public class Previous implements PreviousInterface {
-	
-	private final Hashtable<VertexInterface, VertexInterface> htab = new Hashtable<>();
+public class Previous extends Hashtable<VertexInterface, VertexInterface> implements PreviousInterface {
 
 	public VertexInterface get(VertexInterface vertex) {
-		return htab.get(vertex);
+		return super.get(vertex);
 	}
 
 	public void set(VertexInterface vertex, VertexInterface previousVertex) {
-		htab.put(vertex, previousVertex);
-	}
-	
-	@Override
-	public String toString() {
-		return htab.toString();
+		super.put(vertex, previousVertex);
 	}
 
 }

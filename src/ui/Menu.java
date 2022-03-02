@@ -17,10 +17,12 @@ public class Menu extends JMenuBar {
         this.add(arrivalButton);
 
         JMenuItem newEmptyMazeItem = new JMenuItem("New empty maze");
+        JMenuItem newRandomPrimMazeItem = new JMenuItem("New random maze (Prim)");
         JMenuItem openMazeFileItem = new JMenuItem("Open maze file");
         JMenuItem saveMazeFileItem = new JMenuItem("Save maze to file");
 
         fileMenu.add(newEmptyMazeItem);
+        fileMenu.add(newRandomPrimMazeItem);
         fileMenu.add(openMazeFileItem);
         fileMenu.add(saveMazeFileItem);
 
@@ -34,6 +36,16 @@ public class Menu extends JMenuBar {
             parentWindow.initEmptyMaze(newWidth, newHeight);
         });
 
+        newRandomPrimMazeItem.addActionListener(e -> {
+            int newWidth = parentWindow.promptIntFromUser("New Maze","Enter new maze width :", Maze.DEFAULT_WIDTH);
+            while (newWidth <= 0) newWidth = parentWindow.promptIntFromUser("New Maze","WIDTH MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
+
+            int newHeight = parentWindow.promptIntFromUser("New Maze","Enter new maze height : ", Maze.DEFAULT_HEIGHT);
+            while (newHeight <= 0) newHeight = parentWindow.promptIntFromUser("New Maze","HEIGHT MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
+
+            parentWindow.initRandomPrimMaze(newWidth, newHeight);
+        });
+
         departureButton.addActionListener(e -> parentWindow.setEditionState(EditionState.DEPARTURE));
         arrivalButton.addActionListener(e -> parentWindow.setEditionState(EditionState.ARRIVAL));
 
@@ -42,7 +54,7 @@ public class Menu extends JMenuBar {
             chooser.setSelectedFile(new File(Path.DEFAULT_FILENAME));
             int returnVal = chooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                // Computes relative path using dark magic (kidding I'm subtracting string)
+                // Computes relative path using dark magic (kidding I'm just subtracting strings)
                 String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
                 String dirAbsPath = new File(".").getAbsolutePath();
                 String fileRelativePath = fileAbsPath.substring(dirAbsPath.length() - 1);

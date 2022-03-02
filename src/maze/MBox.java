@@ -1,6 +1,7 @@
 package maze;
 
 import dijkstra.VertexInterface;
+import maze.exceptions.BoxLabelException;
 
 /**
  * Abstract Maze Box

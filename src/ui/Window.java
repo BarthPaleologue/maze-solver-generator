@@ -29,16 +29,29 @@ public class Window extends JFrame implements ChangeListener {
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		this.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
-		setupMenuBar();
-		maze = setupMaze();
-		ControlPanel mazeControlPanel = setupControlPanel();
+		getMazeWidthHeightFromUser();
 
+		setupMenuBar();
+
+		ControlPanel mazeControlPanel = setupControlPanel();
 		this.mazeVuePanel = setupMazeVuePanel();
+
 		mazeControlPanel.add(mazeVuePanel, BorderLayout.CENTER);
 
-		this.pack();
+		maze = new Maze();
+		maze.addListener(this);
+		maze.initRandomPrim(mazeWidth, mazeHeight);
 
+		this.pack();
 		this.setVisible(true);
+	}
+
+	public void getMazeWidthHeightFromUser() {
+		mazeWidth = promptIntFromUser("New Maze","Enter new maze width :", Maze.DEFAULT_WIDTH);
+		while (mazeWidth <= 0) mazeWidth = promptIntFromUser("New Maze","WIDTH MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
+
+		mazeHeight = promptIntFromUser("New Maze","Enter new maze height : ", Maze.DEFAULT_HEIGHT);
+		while (mazeHeight <= 0) mazeHeight = promptIntFromUser("New Maze","HEIGHT MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
 	}
 
 	private JMenuBar setupMenuBar() {
@@ -47,22 +60,6 @@ public class Window extends JFrame implements ChangeListener {
 		this.setJMenuBar(menuBar);
 
 		return menuBar;
-	}
-
-	private MazeInterface setupMaze() {
-		int width = promptIntFromUser("New Maze","Enter new maze width :", Maze.DEFAULT_WIDTH);
-		while (width <= 0) width = promptIntFromUser("New Maze","WIDTH MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
-
-		int height = promptIntFromUser("New Maze","Enter new maze height : ", Maze.DEFAULT_HEIGHT);
-		while (height <= 0) height = promptIntFromUser("New Maze","HEIGHT MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
-
-		MazeInterface maze = new Maze(width, height);
-		maze.addListener(this);
-
-		mazeWidth = maze.getWidth();
-		mazeHeight = maze.getHeight();
-
-		return maze;
 	}
 
 	private ControlPanel setupControlPanel() {
@@ -74,8 +71,8 @@ public class Window extends JFrame implements ChangeListener {
 	}
 
 	private MazeVuePanel setupMazeVuePanel() {
-		MazeVuePanel mazeVuePanel = new MazeVuePanel(maze.getWidth(), maze.getHeight(), this);
-		mazeVuePanel.initMazeUI(maze.getWidth(), maze.getHeight());
+		MazeVuePanel mazeVuePanel = new MazeVuePanel(mazeWidth, mazeHeight, this);
+		mazeVuePanel.initMazeUI(mazeWidth, mazeHeight);
 		return mazeVuePanel;
 	}
 
@@ -89,6 +86,9 @@ public class Window extends JFrame implements ChangeListener {
 
 	public void initEmptyMaze(int width, int height) {
 		maze.initEmpty(width, height);
+	}
+	public void initRandomPrimMaze(int width, int height) {
+		maze.initRandomPrim(width, height);
 	}
 
 	/**
@@ -115,6 +115,14 @@ public class Window extends JFrame implements ChangeListener {
 
 	public int getEditionState() {
 		return editionState;
+	}
+
+	public int getMazeWidth() {
+		return mazeWidth;
+	}
+
+	public int getMazeHeight() {
+		return mazeHeight;
 	}
 
 	@Override

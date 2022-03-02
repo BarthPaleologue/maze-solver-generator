@@ -3,11 +3,9 @@ import maze.MazeInterface;
 import ui.Path;
 
 public class MainTest {
-
 	public static void main(String[] args) {
-		MazeInterface maze = new Maze(10, 10);
+		MazeInterface maze = new Maze();
 		maze.initFromTextFile(Path.MAZE_DIR + "labyrinthe.txt");
 		maze.saveToTextFile(Path.MAZE_DIR + "labyrinthe2.txt");
 	}
-
 }

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public interface MazeInterface {
     void initEmpty(int width, int height);
+    void initRandomPrim(int width, int height);
     void initFromTextFile(String fileName);
     void saveToTextFile(String fileName);
 

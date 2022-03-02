@@ -2,7 +2,14 @@ package dijkstra;
 
 import maze.GraphInterface;
 
+import java.util.Iterator;
+
 public class Dijkstra {
+	/**
+	 * Computes the previous object for the current maze and its start point
+	 * @param maze the maze to computes Dijkstra algorithm for, starting at the maze's start point
+	 * @return the previous object allowing to find the path back to the start point
+	 */
 	public static PreviousInterface compute(GraphInterface maze) {
 		ASetInterface markedSet = new ASet();
 		ASetInterface visitedSet = new ASet();
@@ -17,35 +24,25 @@ public class Dijkstra {
 		
 	
 		while(markedSet.length() > 0) {
-			// trouver le pivot
+			// finding pivot
 			VertexInterface pivot = null;
-			for(int i = 0; i < markedSet.length(); i++) {
-				VertexInterface pivotCandidat = markedSet.get(i);
-				if(pivot == null) pivot = pivotCandidat;
-				else {
-					if(pi.get(pivotCandidat) < pi.get(pivot)) {
-						pivot = pivotCandidat;
-					}
-				}
+			Iterator<VertexInterface> markedIt = markedSet.getIterator();
+			while (markedIt.hasNext()) {
+				VertexInterface pivotCandidate = markedIt.next();
+				if(pivot == null || pi.get(pivotCandidate) < pi.get(pivot)) pivot = pivotCandidate;
 			}
 			
 			markedSet.remove(pivot);
-
-			if(pivot == null) return previous;
 			
 			for(VertexInterface neighbor: maze.getNeighbors(pivot)) {
 				if(!markedSet.contains(neighbor) && !visitedSet.contains(neighbor)) {
 					markedSet.add(neighbor);
 				}
 				if(!pi.contains(neighbor)) {
-					// si sommet à l'infini
 					pi.set(neighbor, pi.get(pivot) + 1);
-
 					previous.set(neighbor, pivot);
 				} else if(pi.get(pivot) + 1 < pi.get(neighbor)) {
-					// si sommet déjà marqué
 					pi.set(neighbor, pi.get(neighbor) + 1);
-
 					previous.set(neighbor, pivot);
 				}
 			}

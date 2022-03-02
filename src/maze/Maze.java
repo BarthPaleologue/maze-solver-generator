@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Random;
 
 import dijkstra.Dijkstra;
 
@@ -20,8 +21,8 @@ public class Maze implements GraphInterface, MazeInterface {
 
 	private ArrayList<VertexInterface[]> vertexMatrix;
 
-	public static final int DEFAULT_WIDTH = 10;
-	public static final int DEFAULT_HEIGHT = 10;
+	public static final int DEFAULT_WIDTH = 30;
+	public static final int DEFAULT_HEIGHT = 30;
 	
 	private VertexInterface startPoint = null;
 	private VertexInterface endPoint = null;
@@ -32,15 +33,6 @@ public class Maze implements GraphInterface, MazeInterface {
 	private int height = 0;
 
 	/**
-	 * Instantiate a new empty maze object
-	 * @param width the width of the maze
-	 * @param height the height of the maze
-	 */
-	public Maze(int width, int height) {
-		initEmpty(width, height);
-	}
-
-	/**
 	 * Init an empty maze of dimensions width x height
 	 * @param width the width of the empty maze
 	 * @param height the height of the empty maze
@@ -48,14 +40,57 @@ public class Maze implements GraphInterface, MazeInterface {
 	public void initEmpty(int width, int height) {
 		this.width = width;
 		this.height = height;
-		this.startPoint = null;
-		this.endPoint = null;
+		startPoint = null;
+		endPoint = null;
 		vertexMatrix = new ArrayList<>();
 		for(int y = 0; y < height; y++) {
 			vertexMatrix.add(new VertexInterface[width]);
 			for(int x = 0; x < width; x++) {
 				vertexMatrix.get(y)[x] = new EBox(x, y);
 			}
+		}
+		stateChanges();
+	}
+
+	public void initRandomPrim(int width, int height) {
+		this.width = width;
+		this.height = height;
+		startPoint = null;
+		endPoint = null;
+		vertexMatrix = new ArrayList<>();
+		for(int y = 0; y < height; y++) {
+			vertexMatrix.add(new VertexInterface[width]);
+			for(int x = 0; x < width; x++) {
+				vertexMatrix.get(y)[x] = new WBox(x, y);
+			}
+		}
+
+		ArrayList<VertexInterface> marked = new ArrayList<>();
+		ArrayList<VertexInterface> walls = new ArrayList<>();
+		Random rd = new Random();
+		VertexInterface start = getCell(rd.nextInt(width), rd.nextInt(height));
+		walls.addAll(getWallsAround(start));
+
+		while (walls.size() > 0) {
+			int index = rd.nextInt(walls.size());
+			VertexInterface rdCell = walls.get(index);
+			int x = rdCell.getX();
+			int y = rdCell.getY();
+
+			int nbExploredNeighbors = 0;
+			if(exists(x-1, y) && marked.contains(getCell(x-1,y))) nbExploredNeighbors++;
+			if(exists(x+1, y) && marked.contains(getCell(x+1,y))) nbExploredNeighbors++;
+			if(exists(x, y-1) && marked.contains(getCell(x,y-1))) nbExploredNeighbors++;
+			if(exists(x, y+1) && marked.contains(getCell(x,y+1))) nbExploredNeighbors++;
+
+			ArrayList<VertexInterface> neighbors = getWallsAround(rdCell);
+
+			if(nbExploredNeighbors < 2) {
+				setCell(x, y, new EBox(x, y));
+				walls.addAll(neighbors);
+			}
+			walls.remove(rdCell);
+			marked.addAll(neighbors);
 		}
 		stateChanges();
 	}
@@ -162,8 +197,28 @@ public class Maze implements GraphInterface, MazeInterface {
 	 * @return if the vertex at (x,y) exists AND is not a wall
 	 */
 	private boolean existsAndNotWall(int x, int y) {
-		if(x < 0 || x >= width || y < 0 || y >= height) return false; // does not exist
-		return getCell(x, y).getLabel() != Labels.WALL; // is not a wall
+		return exists(x, y) && getCell(x, y).getLabel() != Labels.WALL;
+	}
+
+	/**
+	 * Returns whereas the cell at coordinates (x,y) exists in the maze
+	 * @param x the x coordinate to check
+	 * @param y the y coordinate to check
+	 * @return true if the cell does exist, false otherwise
+	 */
+	private boolean exists(int x, int y) {
+		return x >= 0 && x < width && y >= 0 && y < height;
+	}
+
+	/**
+	 * Tests is cell at coordinates (x,y) is of the given label
+	 * @param x the x coordinate to test for
+	 * @param y the y coordinate to test for
+	 * @param label the label to test for
+	 * @return true if the corresponding cell exists and has the given label, false otherwise
+	 */
+	private boolean hasLabel(int x, int y, char label) {
+		return exists(x, y) && getCell(x, y).getLabel() == label;
 	}
 
 	/**
@@ -185,6 +240,25 @@ public class Maze implements GraphInterface, MazeInterface {
 		if(existsAndNotWall(x, y+1)) neighborList.add(getCell(x, y+1));
 
 		return neighborList;
+	}
+
+	/**
+	 * Get neighboring walls of a vertex (useful for prim random algorithm)
+	 * @param vertex the vertex to get the walls around of
+	 * @return the list of the walls neighboring the given cell
+	 */
+	private ArrayList<VertexInterface> getWallsAround(VertexInterface vertex) {
+		int x = vertex.getX();
+		int y = vertex.getY();
+
+		ArrayList<VertexInterface> wallList = new ArrayList<>();
+
+		if(hasLabel(x-1, y, Labels.WALL)) wallList.add(getCell(x-1, y));
+		if(hasLabel(x+1, y, Labels.WALL)) wallList.add(getCell(x+1, y));
+		if(hasLabel(x, y-1, Labels.WALL)) wallList.add(getCell(x, y-1));
+		if(hasLabel(x, y+1, Labels.WALL)) wallList.add(getCell(x, y+1));
+
+		return wallList;
 	}
 
 	/**
