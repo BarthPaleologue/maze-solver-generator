@@ -9,8 +9,7 @@ public class CellVuePanel extends JPanel {
         super();
         this.x = x;
         this.y = y;
-        setBackground(Color.WHITE);
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        setBorder(BorderFactory.createStrokeBorder(new BasicStroke(0.1f)));
     }
 
     public int getGridX() {
