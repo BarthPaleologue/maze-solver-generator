@@ -32,7 +32,7 @@ public class Maze implements GraphInterface, MazeInterface {
 	private int height = 0;
 
 	/**
-	 * Instanciate a new empty maze object
+	 * Instantiate a new empty maze object
 	 * @param width the width of the maze
 	 * @param height the height of the maze
 	 */
@@ -193,7 +193,7 @@ public class Maze implements GraphInterface, MazeInterface {
 	 * @param y coordinate of the vertex to change
 	 * @param vertex the vertex to put at the given coordinates
 	 */
-	public void setCell(int x, int y, VertexInterface vertex) {
+	private void setCell(int x, int y, VertexInterface vertex) {
 		vertexMatrix.get(y)[x] = vertex;
 		stateChanges();
 	}
@@ -240,14 +240,6 @@ public class Maze implements GraphInterface, MazeInterface {
 	}
 
 	/**
-	 * Returns the arrival point of the maze (VertexInterface)
-	 * @return the vertex at the arrival coordinates of the maze
-	 */
-	public VertexInterface getEndPoint() {
-		return endPoint;
-	}
-
-	/**
 	 * Returns the width of the maze
 	 * @return the width of the maze
 	 */
@@ -270,14 +262,12 @@ public class Maze implements GraphInterface, MazeInterface {
 	public ArrayList<VertexInterface> getShortestPath() {
 		ArrayList<VertexInterface> path = new ArrayList<>();
 
-		try {
-			if (endPoint == null) throw new MazeEndPointException();
-			if (startPoint == null) throw new MazeStartPointException();
+		if(startPoint != null && endPoint != null) {
 
 			PreviousInterface previous = Dijkstra.compute(this);
 
 			// détermination du plus court chemin trouvé
-			VertexInterface currentVertex = this.getEndPoint(); // on part de l'arrivée pour revenir au début
+			VertexInterface currentVertex = endPoint; // on part de l'arrivée pour revenir au début
 			System.out.println("Shortest path : ");
 			System.out.print(currentVertex);
 			while (true) {
@@ -285,11 +275,10 @@ public class Maze implements GraphInterface, MazeInterface {
 				System.out.print(" - " + nextVertex);
 
 				// si on est revenu au début, on a fini de remonter le chemin
-				if (nextVertex == this.getStartPoint()) break;
+				if (nextVertex == startPoint) break;
 
 				if (nextVertex == null) {
 					// si le chemin s'arrête brusquement
-					// TODO: en faire une exception ?
 					System.out.println();
 					System.out.println("There is no path between the start point and the end point");
 					break;
@@ -300,8 +289,6 @@ public class Maze implements GraphInterface, MazeInterface {
 				currentVertex = nextVertex;
 			}
 			System.out.println();
-		} catch(MazeStartPointException | MazeEndPointException e) {
-			e.printStackTrace();
 		}
 		return path;
 	}

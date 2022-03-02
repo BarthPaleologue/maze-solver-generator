@@ -2,6 +2,9 @@ package maze;
 
 import dijkstra.VertexInterface;
 
+/**
+ * Abstract Maze Box
+ */
 public abstract class MBox implements VertexInterface {
 	private final int _x;
 	private final int _y;
@@ -14,19 +17,39 @@ public abstract class MBox implements VertexInterface {
 
 		_label = label;
 	}
-	
+
+	/**
+	 * Returns the x coordinate of the box
+	 * @return the x coordinate of the box
+	 */
 	public int getX() {
 		return _x;
 	}
-	
+
+	/**
+	 * Returns the y coordinate of the box
+	 * @return the y coordinate of the box
+	 */
 	public int getY() {
 		return _y;
 	}
-	
+
+	/**
+	 * Returns the label attached to the box
+	 * @return the label attached to the box
+	 */
 	public char getLabel() {
 		return _label;
 	}
 
+	/**
+	 * Creates the right type of box given a label
+	 * @param label the given label
+	 * @param x the x coordinate of the box
+	 * @param y the y coordinate of the box
+	 * @return The new box created from the label
+	 * @throws BoxLabelException if the label is unknown => check maze.Labels to check available labels
+	 */
 	public static VertexInterface CreateFromLabel(char label, int x, int y) throws BoxLabelException {
 		switch(label) {
 			case Labels.ARRIVAL:

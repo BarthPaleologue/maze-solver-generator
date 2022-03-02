@@ -24,14 +24,12 @@ public class Menu extends JMenuBar {
         fileMenu.add(openMazeFileItem);
         fileMenu.add(saveMazeFileItem);
 
-        //TODO: exception pour les valeurs négatives
-
         newEmptyMazeItem.addActionListener(e -> {
             int newWidth = parentWindow.promptIntFromUser("New Maze","Enter new maze width :", Maze.DEFAULT_WIDTH);
-            newWidth = Math.max(1, newWidth);
+            while (newWidth <= 0) newWidth = parentWindow.promptIntFromUser("New Maze","WIDTH MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
 
             int newHeight = parentWindow.promptIntFromUser("New Maze","Enter new maze height : ", Maze.DEFAULT_HEIGHT);
-            newHeight = Math.max(1, newHeight);
+            while (newHeight <= 0) newHeight = parentWindow.promptIntFromUser("New Maze","HEIGHT MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
 
             parentWindow.initEmptyMaze(newWidth, newHeight);
         });
@@ -44,7 +42,7 @@ public class Menu extends JMenuBar {
             chooser.setSelectedFile(new File(Path.DEFAULT_FILENAME));
             int returnVal = chooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                // calcul du chemin relatif à l'aide de soustractions de chaines de caractères
+                // Computes relative path using dark magic (kidding I'm subtracting string)
                 String fileAbsPath = chooser.getSelectedFile().getAbsolutePath();
                 String dirAbsPath = new File(".").getAbsolutePath();
                 String fileRelativePath = fileAbsPath.substring(dirAbsPath.length() - 1);

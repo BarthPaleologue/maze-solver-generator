@@ -9,7 +9,7 @@ public class MazeVuePanel extends JPanel {
 
     private CellPanel[][] UIGrid;
 
-    Window parentWindow;
+    final Window parentWindow;
 
     public MazeVuePanel(int nbCellsX, int nbCellsY, Window parentWindow) {
         super();

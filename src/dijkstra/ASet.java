@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ASet implements ASetInterface {
 	
-	private ArrayList<VertexInterface> list = new ArrayList<>();
+	private final ArrayList<VertexInterface> list = new ArrayList<>();
 
 	public void add(VertexInterface vertex) {
 		list.add(vertex);

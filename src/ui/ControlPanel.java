@@ -1,8 +1,6 @@
 package ui;
 
-import maze.EBox;
 import maze.MazeInterface;
-import maze.WBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class ControlPanel extends JPanel implements MouseListener {
-    Window parentWindow;
+    final Window parentWindow;
     public ControlPanel(Window parentWindow) {
         this.parentWindow = parentWindow;
         addMouseListener(this);

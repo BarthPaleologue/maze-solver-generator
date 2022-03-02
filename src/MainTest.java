@@ -1,13 +1,13 @@
 import maze.Maze;
 import maze.MazeInterface;
-import maze.exceptions.MazeReadingException;
+import ui.Path;
 
 public class MainTest {
 
-	public static void main(String[] args) throws MazeReadingException {
+	public static void main(String[] args) {
 		MazeInterface maze = new Maze(10, 10);
-		maze.initFromTextFile("data/labyrinthe.txt");
-		maze.saveToTextFile("data/labyrinthe2.txt");
+		maze.initFromTextFile(Path.MAZE_DIR + "labyrinthe.txt");
+		maze.saveToTextFile(Path.MAZE_DIR + "labyrinthe2.txt");
 	}
 
 }

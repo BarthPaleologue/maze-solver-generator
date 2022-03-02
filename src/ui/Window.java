@@ -13,7 +13,6 @@ import maze.Maze;
 import maze.MazeInterface;
 
 public class Window extends JFrame implements ChangeListener {
-	private final ControlPanel mazeControlPanel;
 	private final MazeVuePanel mazeVuePanel;
 	private final MazeInterface maze;
 	public static final int DEFAULT_WIDTH = 600;
@@ -32,10 +31,10 @@ public class Window extends JFrame implements ChangeListener {
 
 		setupMenuBar();
 		maze = setupMaze();
-		this.mazeControlPanel = setupControlPanel();
-		this.mazeVuePanel = setupMazeVuePanel();
+		ControlPanel mazeControlPanel = setupControlPanel();
 
-		this.mazeControlPanel.add(mazeVuePanel, BorderLayout.CENTER);
+		this.mazeVuePanel = setupMazeVuePanel();
+		mazeControlPanel.add(mazeVuePanel, BorderLayout.CENTER);
 
 		this.pack();
 
@@ -51,11 +50,11 @@ public class Window extends JFrame implements ChangeListener {
 	}
 
 	private MazeInterface setupMaze() {
-		int width = promptIntFromUser("New Maze","Enter new maze width", Maze.DEFAULT_WIDTH);
-		width = Math.max(1, width);
+		int width = promptIntFromUser("New Maze","Enter new maze width :", Maze.DEFAULT_WIDTH);
+		while (width <= 0) width = promptIntFromUser("New Maze","WIDTH MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
 
-		int height = promptIntFromUser("New Maze", "Enter new maze height", Maze.DEFAULT_HEIGHT);
-		height = Math.max(1, height);
+		int height = promptIntFromUser("New Maze","Enter new maze height : ", Maze.DEFAULT_HEIGHT);
+		while (height <= 0) height = promptIntFromUser("New Maze","HEIGHT MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
 
 		MazeInterface maze = new Maze(width, height);
 		maze.addListener(this);

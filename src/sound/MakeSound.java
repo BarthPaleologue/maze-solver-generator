@@ -8,7 +8,6 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 public class MakeSound {
@@ -24,10 +23,8 @@ public class MakeSound {
      */
     public void playSound(String filename){
 
-        String strFilename = filename;
-
         try {
-            soundFile = new File(strFilename);
+            soundFile = new File(filename);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -46,9 +43,6 @@ public class MakeSound {
         try {
             sourceLine = (SourceDataLine) AudioSystem.getLine(info);
             sourceLine.open(audioFormat);
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-            System.exit(1);
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
