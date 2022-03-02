@@ -1,13 +1,11 @@
 package ui;
 
-import maze.Maze;
-
 import javax.swing.*;
 import java.io.File;
 
 public class Menu extends JMenuBar {
 
-    public Menu(Window parentWindow) {
+    public Menu(ControlWindow parentWindow) {
 
         JMenu fileMenu = new JMenu("Maze File");
         JButton departureButton = new JButton("Set departure");
@@ -26,25 +24,9 @@ public class Menu extends JMenuBar {
         fileMenu.add(openMazeFileItem);
         fileMenu.add(saveMazeFileItem);
 
-        newEmptyMazeItem.addActionListener(e -> {
-            int newWidth = parentWindow.promptIntFromUser("New Maze","Enter new maze width :", Maze.DEFAULT_WIDTH);
-            while (newWidth <= 0) newWidth = parentWindow.promptIntFromUser("New Maze","WIDTH MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
+        newEmptyMazeItem.addActionListener(e -> parentWindow.initEmptyMaze());
 
-            int newHeight = parentWindow.promptIntFromUser("New Maze","Enter new maze height : ", Maze.DEFAULT_HEIGHT);
-            while (newHeight <= 0) newHeight = parentWindow.promptIntFromUser("New Maze","HEIGHT MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
-
-            parentWindow.initEmptyMaze(newWidth, newHeight);
-        });
-
-        newRandomPrimMazeItem.addActionListener(e -> {
-            int newWidth = parentWindow.promptIntFromUser("New Maze","Enter new maze width :", Maze.DEFAULT_WIDTH);
-            while (newWidth <= 0) newWidth = parentWindow.promptIntFromUser("New Maze","WIDTH MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
-
-            int newHeight = parentWindow.promptIntFromUser("New Maze","Enter new maze height : ", Maze.DEFAULT_HEIGHT);
-            while (newHeight <= 0) newHeight = parentWindow.promptIntFromUser("New Maze","HEIGHT MUST BE POSITIVE ! Try again : ", Maze.DEFAULT_WIDTH);
-
-            parentWindow.initRandomPrimMaze(newWidth, newHeight);
-        });
+        newRandomPrimMazeItem.addActionListener(e -> parentWindow.initRandomPrimMaze());
 
         departureButton.addActionListener(e -> parentWindow.setEditionState(EditionState.DEPARTURE));
         arrivalButton.addActionListener(e -> parentWindow.setEditionState(EditionState.ARRIVAL));

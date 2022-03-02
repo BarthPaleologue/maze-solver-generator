@@ -8,8 +8,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class ControlPanel extends JPanel implements MouseListener {
-    final Window parentWindow;
-    public ControlPanel(Window parentWindow) {
+    final ControlWindow parentWindow;
+    public ControlPanel(ControlWindow parentWindow) {
         this.parentWindow = parentWindow;
         addMouseListener(this);
     }

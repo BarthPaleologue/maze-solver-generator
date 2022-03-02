@@ -4,17 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MazeVuePanel extends JPanel {
-    private int nbCellsX;
-    private int nbCellsY;
+    private int nbCellsX = 0;
+    private int nbCellsY = 0;
 
     private CellPanel[][] UIGrid;
 
-    final Window parentWindow;
+    final ControlWindow parentWindow;
 
-    public MazeVuePanel(int nbCellsX, int nbCellsY, Window parentWindow) {
+    public MazeVuePanel(ControlWindow parentWindow) {
         super();
-        this.nbCellsX = nbCellsX;
-        this.nbCellsY = nbCellsY;
 
         this.parentWindow = parentWindow;
     }
