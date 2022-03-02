@@ -3,9 +3,9 @@ package ui;
 import javax.swing.*;
 import java.io.File;
 
-public class Menu extends JMenuBar {
+public class ControlMenu extends JMenuBar {
 
-    public Menu(ControlWindow parentWindow) {
+    public ControlMenu(ControlWindow parentWindow) {
 
         JMenu fileMenu = new JMenu("Maze File");
         JButton departureButton = new JButton("Set departure");

@@ -26,7 +26,7 @@ public class ControlPanel extends JPanel implements MouseListener {
         MazeInterface maze = parentWindow.getMaze();
 
         // le cast est faisable car on ne peut clicker que sur des CellPanel dans le MazePanel
-        CellPanel clickedCell = (CellPanel) cc;
+        CellVuePanel clickedCell = (CellVuePanel) cc;
 
         int cellX = clickedCell.getGridX();
         int cellY = clickedCell.getGridY();

@@ -7,7 +7,7 @@ public class MazeVuePanel extends JPanel {
     private int nbCellsX = 0;
     private int nbCellsY = 0;
 
-    private CellPanel[][] UIGrid;
+    private CellVuePanel[][] UIGrid;
 
     final ControlWindow parentWindow;
 
@@ -29,11 +29,11 @@ public class MazeVuePanel extends JPanel {
         this.nbCellsY = nbCellsY;
         setLayout(new GridLayout(nbCellsY, nbCellsX));
 
-        UIGrid = new CellPanel[nbCellsX][nbCellsY];
+        UIGrid = new CellVuePanel[nbCellsX][nbCellsY];
 
         for(int y = 0; y < nbCellsY; y++) {
             for(int x = 0; x < nbCellsX; x++) {
-                CellPanel cell = new CellPanel(x, y);
+                CellVuePanel cell = new CellVuePanel(x, y);
                 this.add(cell);
                 UIGrid[x][y] = cell;
             }

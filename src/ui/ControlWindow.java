@@ -49,7 +49,7 @@ public class ControlWindow extends JFrame implements ChangeListener {
 	 * @return The menu bar of the window
 	 */
 	private JMenuBar setupMenuBar() {
-		JMenuBar menuBar = new Menu(this);
+		JMenuBar menuBar = new ControlMenu(this);
 		this.add(menuBar);
 		this.setJMenuBar(menuBar);
 
