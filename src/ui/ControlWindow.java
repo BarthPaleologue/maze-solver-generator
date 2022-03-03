@@ -19,6 +19,7 @@ import ui.vue.MazeVuePanel;
 public class ControlWindow extends JFrame implements ChangeListener {
 	private final MazeVuePanel mazeVuePanel;
 	private final MazeInterface maze;
+
 	public static final int DEFAULT_WIDTH = 600;
 	public static final int DEFAULT_HEIGHT = 670;
 
@@ -171,7 +172,7 @@ public class ControlWindow extends JFrame implements ChangeListener {
 	}
 
 	public Color getColorFromCoords(int x, int y) {
-		return Colors.getColorFromLabel(maze.getCell(x, y).getLabel());
+		return Colors.getColorFromLabel(maze.getLabelAt(x, y));
 	}
 
 	private int promptIntFromUser(String promptTitle, String promptText, int defaultValue) {

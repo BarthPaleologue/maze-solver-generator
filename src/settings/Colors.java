@@ -31,6 +31,9 @@ public class Colors {
         }
     }
 
+    /**
+     * Sets the colors of the maze to its default configuration
+     */
     public static void setDefaultColorScheme() {
         WALL_COLOR = Color.DARK_GRAY;
         EMPTY_COLOR = Color.WHITE;
@@ -40,6 +43,9 @@ public class Colors {
         PATH_COLOR = Color.GREEN;
     }
 
+    /**
+     * Sets the colors of the maze to those of the glorious USSR
+     */
     public static void setUSSRColorScheme() {
         setDefaultColorScheme();
         WALL_COLOR = Color.YELLOW;
@@ -49,10 +55,13 @@ public class Colors {
         PATH_COLOR = new Color(128, 0, 0);
     }
 
+    /**
+     * Sets the colors of the maze to those of the glorious Ukraine
+     */
     public static void setUkraineColorScheme() {
         setDefaultColorScheme();
         WALL_COLOR = new Color(254, 214, 47);
         EMPTY_COLOR = new Color(1, 90, 185);
-        DEPARTURE_COLOR = Color.WHITE;
+        DEPARTURE_COLOR = Color.BLACK;
     }
 }

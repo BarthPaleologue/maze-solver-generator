@@ -20,10 +20,10 @@ public class Dijkstra {
 
 		VertexInterface startPoint = maze.getStartPoint();
 		markedSet.add(startPoint);
-		pi.set(startPoint, 0);
+		pi.put(startPoint, 0);
 		
 	
-		while(markedSet.length() > 0) {
+		while(markedSet.size() > 0) {
 			// finding pivot
 			VertexInterface pivot = null;
 			Iterator<VertexInterface> markedIt = markedSet.getIterator();
@@ -39,10 +39,10 @@ public class Dijkstra {
 					markedSet.add(neighbor);
 				}
 				if(!pi.contains(neighbor)) {
-					pi.set(neighbor, pi.get(pivot) + 1);
+					pi.put(neighbor, pi.get(pivot) + 1);
 					previous.set(neighbor, pivot);
 				} else if(pi.get(pivot) + 1 < pi.get(neighbor)) {
-					pi.set(neighbor, pi.get(neighbor) + 1);
+					pi.put(neighbor, pi.get(neighbor) + 1);
 					previous.set(neighbor, pivot);
 				}
 			}

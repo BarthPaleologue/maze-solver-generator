@@ -1,51 +1,67 @@
 # Solveur de Labyrinthe Graphique
-par Barthélemy Paléologue
 
 ![Overview](./data/imgs/overview.png)
 
+## Presentation
+
+This java project is a graphical application designed to display and solve rectangular mazes.
+
+Moreover, the project provides a generator of random mazes for both testing and flexing purposes.
+
 ## Installation
 
-Pour installer le solveur sur votre machine, entrez cette commande dans votre terminal favori :
+To install the application on your computer, input the following command in the terminal of your choice :
 
 ```bash
 git clone git@gitlab.enst.fr:2021INF103/groupe2/paleologue-barthelemy.git
 ```
 
-Vous pouvez ensuite ouvrir le dossier avec Eclipse ou IntelliJ IDEA.
+You will have to build the application from source but you can use a Java IDE for that purpose.
 
-Le point d'entrée du programme est ```./src/Main```
+### Eclipse
+Using Eclipse, open the folder and run ```./src/Main.java```
 
-## Utilisation
+### IntelliJ IDEA
+Using IntelliJ, open the folder and go to File > Project Structure > Modules > Add > Import Module and add the project folder.
+Then add a running configuration, choose a compatible SDK and choose ```./src/Main.java``` as your entry point.
 
-Au lancement du programme, il vous sera demandé d'entrer les dimensions d'un labyrinthe vide qui vous sera présenté. Le programme a été conçu pour supporter des tailles allant jusqu'à 60x60.
+## User Guide
 
-L'interface est divisée en deux parties : la barre de menu et la grille du labyrinthe.
+Once you have built the application in your IDE, the application will start and will ask you to enter the width and the height of a new maze.
 
-### Barre de menu
+The application will then generate a random maze given your inputs and display it on the screen.
 
-La barre de menu vous offre différentes options. Tout d'abord le sous menu ```Maze File``` qui permet de créer un nouveau labyrinthe vide, d'ouvrir un fichier labyrinthe compatible ou de sauvegarder le labyrinthe à l'écran dans un fichier sur l'ordinateur.
+As you can see, the UI is made of two parts : a menu bar and a maze grid.
 
-Reste les boutons ```Set Departure``` et ```Set Arrival``` qui permettent de définir le point de départ et le point d'arrivée du labyrinthe. Pour ce faire clickez sur un des boutons, puis faites clic gauche sur une des cases du labyrinthe pour changer son statut.
+### The Menu Bar
 
-### Labyrinthe
+The menu bar allows you to control the application. 
 
-Comme vu précédemment, la grille détecte les clicks de la souris. Un clic gauche sur une case (sans avoir clické au préalable sur un des boutons du menu) transforme la case en case de mur.
+First you have the ```Maze File``` menu that provides options for opening maze files, saving maze to files, and generating both random and empty mazes.
 
-Un clic droit tranforme la case en case vide.
+Then you have the ```Set Departure``` and ```Set Arrival``` buttons which allow you to set the departure and arrival points in the maze. Simply click on one of these two and then click on a cell of the maze grid : you will see the cell has changed color as you have defined a new departure or arrival point.
 
-Le calcul du chemin le plus court est automatique du moment qu'il existe un point de départ et un point d'arrivée. Celui-ci s'illumine en vert.
+Finally, you have the ```Toggle Sound``` button which toggles sound at the level of the application : sound effects and musics are targeted.
 
-Si il n'y a pas de chemin vert affiché, c'est qu'il manque un point de départ ou un point d'arrivé ou alors qu'il n'y a pas de chemin possible entre le point de départ et le point d'arrivée.
+### The Maze Grid
 
-## Charger un fichier
+As written before, the grid detects clicks on cells.
 
-Le projet vient livré avec de nombreux fichiers de labyrinthe se trouvant dans ```./data``` que vous pouvez facilement ouvrir à l'aide du menu ```Maze File```.
+A left click on a cell will turn it into a wall cell.
 
-Vous pouvez également charger les labyrinthes que vous avez créé avec l'interface graphique en utilisant la même procédure.
+A left click on a wall cell will turn it into an empty cell.
 
-Il est cependant possible de créer vos propres fichiers de labyrinthes sans passer par le mode édition de l'interface graphique, pour cela il faut respécter la norme suivante.
+A right click on a wall cell will also turn it into an empty cell.
 
-Le solveur peut lire des fichiers de la forme :
+As long as the departure and arrival points are both defined in the maze, the computation and display of the shortest path between the two will be done automatically, no button-press needed.
+
+That means that if both are defined and no path is shown on the screen, the way between the two is blocked somewhere and no path exists.
+
+## Maze File Format
+
+The project ships with various maze files located in ```./data/mazeFiles/```. However you can choose to load your own by saving a maze using the option in the ```Maze File``` menu, or you can directly write your own maze file (why are you doing this to yourself though ?).
+
+If you really wish to do so, know that the application uses the following format :
 
 ```
 EDEEEEEEEE
@@ -59,14 +75,91 @@ EWEWWEWEEE
 EWEEWEEEEE
 EEWEEEEEEE
 ```
-C'est-à-dire qu'il ne contient que les labels du labyrinthe avec la correspondance suivante :
 
-E : Case vide (Empty)
+The file contains the labels of the cells of the maze :
 
-D : Case de Départ
+E : Empty cell
 
-A : Case d'Arrivée
+D : Departure cell
 
-W : Case de mur (Wall)
+A : Arrival cell
 
-Notez que cette nomenclature est modifiable à volonté dans le fichier ```./src/maze/Labels.java```
+W : Wall cell
+
+If these labels don't suit you, feel free to change them in the corresponding configuration file  ```./src/settings/Labels.java```
+
+## Configuration
+
+Speaking of configuration, you have a lot of freedom :
+
+### Labels
+
+As written in the previous section, you can edit the maze file format at ```./src/settings/Labels.java```
+
+### Colors
+
+You can also edit the default color scheme of the maze by editing the ```setDefaultColorScheme``` method in ```./src/settings/Colors.java```
+
+### Path
+
+By default, the application will use the ```./data/``` folder for the maze files. You can change the default folder in ```./src/settings/Path.java```
+
+You can also change the directory for sound effects and the default maze file name.
+
+### Sound Types
+
+That one is more tricky, but you can add sound files to the application.
+
+First, add your sound file (.wav only sorry) to the sound folder of the application (by default : ```./data/sounds``` but you can change it in ```./src/settings/Path.java``` if you want).
+
+Now, you will open ```./src/settings/SoundTypes.java```
+
+Inside this file you need to set the alias of your sound effect by adding :
+```java
+public static final int YOUR_ALIAS = aNumber;
+```
+
+Then you have to go in the switch statement of the file and add the following before the default case :
+```java
+case YOUR_ALIAS:
+    return Path.SOUND_DIR + "yourFileName.txt";
+```
+
+Now the application is ready to use your sound file ! To use it in the code, add this line when you want your sound played :
+
+```java
+MakeSound.play(SoundTypes.YOUR_ALIAS);
+```
+
+## Technical Justifications
+
+### On ```@Override```
+Override statements are only used on methods overriding the implementation of super classes. 
+
+It doesn't make sense to use them when implementing an interface as there is nothing to override because the methods are yet unimplemented.
+
+Even though it allows the compiler to check the names of the methods beforehand, it lacks readability.
+
+### On ```switch``` statements
+When working with ```int``` and ```char```, it is more interesting performance-wise to use switch statements instead of if and else if blocks. 
+
+As a matter of facts, switch statements when compiled create jump tables that allow the program to jump directly to the correct case instead of testing every condition like in an if else if block. 
+
+Therefore, I use them when it is faster and justified, despite the requirements of the exam.
+
+## About the author
+
+This project has been created and conducted by Barthélemy Paléologue.
+
+### Distribution
+
+This project is distributed under the GNU GENERAL PUBLIC LICENSE
+Version 3. You can use this code at your liking, credit is appreciated but not required.
+
+### Links
+
+I have other projects to showcase, you can find them at these locations :
+
+Check my github : https://github.com/BarthPaleologue
+
+Check my website : https://barth.paleologue.fr

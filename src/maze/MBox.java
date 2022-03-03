@@ -8,40 +8,25 @@ import settings.Labels;
  * Abstract Maze Box
  */
 public abstract class MBox implements VertexInterface {
-	private final int _x;
-	private final int _y;
-	
-	private final char _label;
+	private final int x, y;
+
+	private final char label;
 	
 	public MBox(int x, int y, char label) {
-		_x = x;
-		_y = y;
+		this.x = x;
+		this.y = y;
 
-		_label = label;
+		this.label = label;
 	}
 
-	/**
-	 * Returns the x coordinate of the box
-	 * @return the x coordinate of the box
-	 */
 	public int getX() {
-		return _x;
+		return x;
 	}
-
-	/**
-	 * Returns the y coordinate of the box
-	 * @return the y coordinate of the box
-	 */
 	public int getY() {
-		return _y;
+		return y;
 	}
-
-	/**
-	 * Returns the label attached to the box
-	 * @return the label attached to the box
-	 */
 	public char getLabel() {
-		return _label;
+		return label;
 	}
 
 	/**
@@ -69,6 +54,6 @@ public abstract class MBox implements VertexInterface {
 	
 	@Override
 	public String toString() {
-		return "[" + _x + ";" + _y + ";" + _label + "]";
+		return "[" + x + ";" + y + ";" + label + "]";
 	}
 }

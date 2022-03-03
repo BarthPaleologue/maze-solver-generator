@@ -1,5 +1,9 @@
 package settings;
 
+/**
+ * Sound settings used in the sound pipeline, you can add a few if you feel like it
+ * Limitation : you can only play .wav audio files
+ */
 public class SoundTypes {
     public static final int OH_SOUND = 0;
     public static final int USSR_ANTHEM = 1;
