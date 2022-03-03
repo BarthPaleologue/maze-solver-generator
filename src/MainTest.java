@@ -1,6 +1,6 @@
 import maze.Maze;
 import maze.MazeInterface;
-import ui.Path;
+import settings.Path;
 
 public class MainTest {
 	public static void main(String[] args) {

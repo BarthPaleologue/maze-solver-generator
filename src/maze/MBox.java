@@ -2,6 +2,7 @@ package maze;
 
 import dijkstra.VertexInterface;
 import maze.exceptions.BoxLabelException;
+import settings.Labels;
 
 /**
  * Abstract Maze Box
@@ -49,7 +50,7 @@ public abstract class MBox implements VertexInterface {
 	 * @param x the x coordinate of the box
 	 * @param y the y coordinate of the box
 	 * @return The new box created from the label
-	 * @throws BoxLabelException if the label is unknown => check maze.Labels to check available labels
+	 * @throws BoxLabelException if the label is unknown => check settings.Labels to check available labels
 	 */
 	public static VertexInterface CreateFromLabel(char label, int x, int y) throws BoxLabelException {
 		switch(label) {

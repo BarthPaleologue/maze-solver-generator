@@ -1,5 +1,7 @@
 package maze;
 
+import settings.Labels;
+
 /**
  * Arrival Box in Maze
  */

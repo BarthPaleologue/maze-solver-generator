@@ -1,5 +1,7 @@
 package maze;
 
+import settings.Labels;
+
 /**
  * Wall Box in Maze
  */

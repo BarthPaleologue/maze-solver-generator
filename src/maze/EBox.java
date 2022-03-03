@@ -1,5 +1,7 @@
 package maze;
 
+import settings.Labels;
+
 /**
  * Empty Box in Maze
  */

@@ -1,6 +1,9 @@
 package ui;
 
 import maze.MazeInterface;
+import sound.MakeSound;
+import settings.SoundTypes;
+import ui.vue.CellVuePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +14,7 @@ public class ControlPanel extends JPanel implements MouseListener {
     final ControlWindow parentWindow;
     public ControlPanel(ControlWindow parentWindow) {
         this.parentWindow = parentWindow;
+        setLayout(new BorderLayout());
         addMouseListener(this);
     }
     @Override
@@ -38,13 +42,16 @@ public class ControlPanel extends JPanel implements MouseListener {
                     case EditionState.DEPARTURE:
                         maze.setStartPoint(cellX, cellY);
                         parentWindow.setEditionState(EditionState.WALL);
+                        MakeSound.play(SoundTypes.POKE_SOUND);
                         break;
                     case EditionState.ARRIVAL:
                         maze.setEndPoint(cellX, cellY);
                         parentWindow.setEditionState(EditionState.WALL);
+                        MakeSound.play(SoundTypes.POKE_SOUND);
                         break;
                     case EditionState.WALL:
                         maze.placeWallAt(cellX, cellY);
+                        MakeSound.play(SoundTypes.POKE_SOUND);
                         break;
                 }
                 break;
@@ -52,6 +59,7 @@ public class ControlPanel extends JPanel implements MouseListener {
                 break;
             case 3:
                 maze.placeEmptyAt(cellX, cellY);
+                MakeSound.play(SoundTypes.REMOVE_SOUND);
                 break;
         }
     }

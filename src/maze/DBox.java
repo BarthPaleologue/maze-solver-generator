@@ -1,5 +1,7 @@
 package maze;
 
+import settings.Labels;
+
 /**
  * Departure Box in Maze
  */

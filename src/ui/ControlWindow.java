@@ -8,9 +8,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import dijkstra.VertexInterface;
-import maze.Labels;
 import maze.Maze;
 import maze.MazeInterface;
+import settings.Colors;
+import sound.MakeSound;
+import settings.SoundTypes;
+import ui.menuBar.ControlMenuBar;
+import ui.vue.MazeVuePanel;
 
 public class ControlWindow extends JFrame implements ChangeListener {
 	private final MazeVuePanel mazeVuePanel;
@@ -31,10 +35,14 @@ public class ControlWindow extends JFrame implements ChangeListener {
 
 		setupMenuBar();
 
-		ControlPanel mazeControlPanel = setupControlPanel();
+		ControlPanel mazeControlPanel = new ControlPanel(this);
+		this.add(mazeControlPanel);
+
 		this.mazeVuePanel = new MazeVuePanel(this);
 
 		mazeControlPanel.add(mazeVuePanel, BorderLayout.CENTER);
+
+		Colors.setDefaultColorScheme();
 
 		maze = new Maze();
 		maze.addListener(this);
@@ -46,26 +54,11 @@ public class ControlWindow extends JFrame implements ChangeListener {
 
 	/**
 	 * Sets up the menu bar of the window and returns it
-	 * @return The menu bar of the window
 	 */
-	private JMenuBar setupMenuBar() {
-		JMenuBar menuBar = new ControlMenu(this);
+	private void setupMenuBar() {
+		JMenuBar menuBar = new ControlMenuBar(this);
 		this.add(menuBar);
 		this.setJMenuBar(menuBar);
-
-		return menuBar;
-	}
-
-	/**
-	 * Sets up the control panel that will handle click from the user
-	 * @return the control panel
-	 */
-	private ControlPanel setupControlPanel() {
-		ControlPanel mazeControlPanel = new ControlPanel(this);
-		mazeControlPanel.setLayout(new BorderLayout());
-		this.add(mazeControlPanel);
-
-		return mazeControlPanel;
 	}
 
 	/**
@@ -73,6 +66,7 @@ public class ControlWindow extends JFrame implements ChangeListener {
 	 */
 	private void initGridFromUserInput() {
 		getMazeWidthHeightFromUser();
+		Colors.setDefaultColorScheme();
 		mazeVuePanel.initMazeUI(gridWidth, gridHeight);
 		this.pack();
 	}
@@ -82,6 +76,20 @@ public class ControlWindow extends JFrame implements ChangeListener {
 	 * @param filePath the relative path to the maze file
 	 */
 	public void loadMaze(String filePath) {
+		if(filePath.contains("ussr")) {
+			// Nothing to see here, or is it ?
+			MakeSound.reset();
+			MakeSound.play(SoundTypes.USSR_ANTHEM);
+			Colors.setUSSRColorScheme();
+		} else if(filePath.contains("ukraine")) {
+			// You are still reading, aren't you ?
+			MakeSound.reset();
+			MakeSound.play(SoundTypes.UKRAINIAN_ANTHEM);
+			Colors.setUkraineColorScheme();
+		} else {
+			MakeSound.killAllPlaying();
+			Colors.setDefaultColorScheme();
+		}
 		maze.initFromTextFile(filePath);
 	}
 
@@ -90,6 +98,7 @@ public class ControlWindow extends JFrame implements ChangeListener {
 	 */
 	public void initEmptyMaze() {
 		initGridFromUserInput();
+		MakeSound.killAllPlaying();
 		maze.initEmpty(gridWidth, gridHeight);
 	}
 
@@ -98,6 +107,7 @@ public class ControlWindow extends JFrame implements ChangeListener {
 	 */
 	public void initRandomPrimMaze() {
 		initGridFromUserInput();
+		MakeSound.killAllPlaying();
 		maze.initRandomPrim(gridWidth, gridHeight);
 	}
 
@@ -115,7 +125,7 @@ public class ControlWindow extends JFrame implements ChangeListener {
 	 */
 	public void displayPath(ArrayList<VertexInterface> path) {
 		for(int i = 0; i < path.size(); i++) {
-			mazeVuePanel.setCellColor(path.get(i).getX(), path.get(i).getY(), Color.GREEN);
+			mazeVuePanel.setCellColor(path.get(i).getX(), path.get(i).getY(), Colors.PATH_COLOR);
 		}
 	}
 
@@ -161,7 +171,7 @@ public class ControlWindow extends JFrame implements ChangeListener {
 	}
 
 	public Color getColorFromCoords(int x, int y) {
-		return Labels.getColorFromLabel(maze.getCell(x, y).getLabel());
+		return Colors.getColorFromLabel(maze.getCell(x, y).getLabel());
 	}
 
 	private int promptIntFromUser(String promptTitle, String promptText, int defaultValue) {

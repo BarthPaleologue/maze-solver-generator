@@ -13,6 +13,7 @@ import dijkstra.Dijkstra;
 import dijkstra.PreviousInterface;
 import dijkstra.VertexInterface;
 import maze.exceptions.*;
+import settings.Labels;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -211,14 +212,13 @@ public class Maze implements GraphInterface, MazeInterface {
 	}
 
 	/**
-	 * Tests is cell at coordinates (x,y) is of the given label
+	 * Tests is cell at coordinates (x,y) is a wall
 	 * @param x the x coordinate to test for
 	 * @param y the y coordinate to test for
-	 * @param label the label to test for
-	 * @return true if the corresponding cell exists and has the given label, false otherwise
+	 * @return true if the corresponding cell exists and is a wall, false otherwise
 	 */
-	private boolean hasLabel(int x, int y, char label) {
-		return exists(x, y) && getCell(x, y).getLabel() == label;
+	private boolean existsAndIsWall(int x, int y) {
+		return exists(x, y) && getCell(x, y).getLabel() == Labels.WALL;
 	}
 
 	/**
@@ -253,10 +253,10 @@ public class Maze implements GraphInterface, MazeInterface {
 
 		ArrayList<VertexInterface> wallList = new ArrayList<>();
 
-		if(hasLabel(x-1, y, Labels.WALL)) wallList.add(getCell(x-1, y));
-		if(hasLabel(x+1, y, Labels.WALL)) wallList.add(getCell(x+1, y));
-		if(hasLabel(x, y-1, Labels.WALL)) wallList.add(getCell(x, y-1));
-		if(hasLabel(x, y+1, Labels.WALL)) wallList.add(getCell(x, y+1));
+		if(existsAndIsWall(x-1, y)) wallList.add(getCell(x-1, y));
+		if(existsAndIsWall(x+1, y)) wallList.add(getCell(x+1, y));
+		if(existsAndIsWall(x, y-1)) wallList.add(getCell(x, y-1));
+		if(existsAndIsWall(x, y+1)) wallList.add(getCell(x, y+1));
 
 		return wallList;
 	}
