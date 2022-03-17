@@ -1,5 +1,8 @@
 # Solveur de Labyrinthe Graphique
 
+[![CodeQL](https://github.com/BarthPaleologue/maze-solver-generator/actions/workflows/codeql.yml/badge.svg)](https://github.com/BarthPaleologue/maze-solver-generator/actions/workflows/codeql.yml)
+[![License](https://img.shields.io/github/license/BarthPaleologue/maze-solver-generator)](./LICENSE)
+
 ![Overview](./data/imgs/overview.png)
 
 ## Presentation
