@@ -154,7 +154,84 @@
   
   <!-- Modules -->
   
-  <import file="${basedir}/module_paleologue-barthelemy.xml"/>
+  
+  <!-- Module paleologue-barthelemy -->
+  
+  <dirname property="module.paleologue-barthelemy.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.paleologue-barthelemy" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.paleologue-barthelemy" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.paleologue-barthelemy" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.paleologue-barthelemy" value="-encoding UTF-8 -source 11 -target 11 ${compiler.args}"/>
+  
+  <property name="paleologue-barthelemy.output.dir" value="${module.paleologue-barthelemy.basedir}/bin"/>
+  <property name="paleologue-barthelemy.testoutput.dir" value="${module.paleologue-barthelemy.basedir}/bin"/>
+  
+  <path id="paleologue-barthelemy.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="paleologue-barthelemy.module.production.classpath">
+    <path refid="${module.jdk.classpath.paleologue-barthelemy}"/>
+  </path>
+  
+  <path id="paleologue-barthelemy.runtime.production.module.classpath">
+    <pathelement location="${paleologue-barthelemy.output.dir}"/>
+  </path>
+  
+  <path id="paleologue-barthelemy.module.classpath">
+    <pathelement location="${paleologue-barthelemy.output.dir}"/>
+    <path refid="${module.jdk.classpath.paleologue-barthelemy}"/>
+  </path>
+  
+  <path id="paleologue-barthelemy.runtime.module.classpath">
+    <pathelement location="${paleologue-barthelemy.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.paleologue-barthelemy">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.paleologue-barthelemy">
+    <patternset refid="excluded.from.module.paleologue-barthelemy"/>
+  </patternset>
+  
+  <path id="paleologue-barthelemy.module.sourcepath">
+    <dirset dir="${module.paleologue-barthelemy.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.paleologue-barthelemy" depends="compile.module.paleologue-barthelemy.production,compile.module.paleologue-barthelemy.tests" description="Compile module paleologue-barthelemy"/>
+  
+  <target name="compile.module.paleologue-barthelemy.production" depends="register.custom.compilers" description="Compile module paleologue-barthelemy; production classes">
+    <mkdir dir="${paleologue-barthelemy.output.dir}"/>
+    <javac2 destdir="${paleologue-barthelemy.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.paleologue-barthelemy}/javac">
+      <compilerarg line="${compiler.args.paleologue-barthelemy}"/>
+      <bootclasspath refid="paleologue-barthelemy.module.bootclasspath"/>
+      <classpath refid="paleologue-barthelemy.module.production.classpath"/>
+      <src refid="paleologue-barthelemy.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.paleologue-barthelemy"/>
+    </javac2>
+    
+    <copy todir="${paleologue-barthelemy.output.dir}">
+      <fileset dir="${module.paleologue-barthelemy.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.paleologue-barthelemy.tests" depends="register.custom.compilers,compile.module.paleologue-barthelemy.production" description="compile module paleologue-barthelemy; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.paleologue-barthelemy" description="cleanup module">
+    <delete dir="${paleologue-barthelemy.output.dir}"/>
+    <delete dir="${paleologue-barthelemy.testoutput.dir}"/>
+  </target>
   
   <target name="init" description="Build initialization">
     <!-- Perform any build initialization in this target -->
