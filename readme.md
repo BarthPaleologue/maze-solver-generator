@@ -1,4 +1,4 @@
-# Solveur de Labyrinthe Graphique
+# Graphical Maze Solver/Generator
 
 ![Overview](./data/imgs/overview.png)
 
