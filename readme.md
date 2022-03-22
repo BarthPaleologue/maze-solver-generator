@@ -57,6 +57,14 @@ As long as the departure and arrival points are both defined in the maze, the co
 
 That means that if both are defined and no path is shown on the screen, the way between the two is blocked somewhere and no path exists.
 
+### Generating Mazes
+
+The application provides the option to generate mazes using Prim's randomization algorithm. The maximum size you can generate will depend on your hardware but keep in mind that the generation algorithm has a complexity of ```O(with * height)```.
+
+I recommend not going beyond 80x80, but you can try if you trust your computer !
+
+You can find a 300x300 maze generated using this method in ```./data/mazeFiles/stressTest/```
+
 ## Maze File Format
 
 The project ships with various maze files located in ```./data/mazeFiles/```. However you can choose to load your own by saving a maze using the option in the ```Maze File``` menu, or you can directly write your own maze file (why are you doing this to yourself though ?).
@@ -133,14 +141,14 @@ MakeSound.play(SoundTypes.YOUR_ALIAS);
 
 ## Technical Justifications
 
-### On ```@Override```
-Override statements are only used on methods overriding the implementation of super classes. 
+### ```@Override``` annotation
+Override annotations are only used on methods overriding the implementation of super classes. 
 
 It doesn't make sense to use them when implementing an interface as there is nothing to override because the methods are yet unimplemented.
 
 Even though it allows the compiler to check the names of the methods beforehand, it lacks readability.
 
-### On ```switch``` statements
+### ```switch``` statements
 When working with ```int``` and ```char```, it is more interesting performance-wise to use switch statements instead of if and else if blocks. 
 
 As a matter of facts, switch statements when compiled create jump tables that allow the program to jump directly to the correct case instead of testing every condition like in an if else if block. 
